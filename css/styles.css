@@ -11732,3 +11732,26 @@ html {
     left: -2vw;
   }
 }
+/* === Override: Gradient for badge + photo card === */
+.bg-gradient-primary-to-secondary {
+  background: linear-gradient(135deg, #0d6efd, #20c997); /* blue → teal */
+}
+/* === Override: also chnage big text color to match image colors === */
+.text-gradient {
+  background: linear-gradient(135deg, #0d6efd, #20c997);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+/* === Override: reduce portrait size by ~15% across breakpoints === */
+@media (min-width: 768px) {
+  .profile .profile-img { height: 47vw; }   /* was 55vw */
+}
+
+@media (min-width: 992px) {
+  .profile .profile-img { height: 38vw; }   /* was 45vw */
+}
+
+@media (min-width: 1200px) {
+  .profile .profile-img { height: 34vw; }   /* was 40vw */
+}
+
