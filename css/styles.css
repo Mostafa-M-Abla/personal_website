@@ -11734,11 +11734,11 @@ html {
 }
 /* === Override: Gradient for badge + photo card === */
 .bg-gradient-primary-to-secondary {
-  background: linear-gradient(135deg, #20c997, #6f42c1); /* blue → teal */
+  background: linear-gradient(135deg, #6f42c1, #20c997); /* blue → teal */
 }
 /* === Override: also chnage big text color to match image colors === */
 .text-gradient {
-  background: linear-gradient(135deg, #20c997, #6f42c1);
+  background: linear-gradient(135deg, #6f42c1, #20c997);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
