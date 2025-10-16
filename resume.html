@@ -28,35 +28,31 @@
 		  }
 		</style>
 		<style>
-		.skills-section h5 {
-		  margin-top: 1rem;
-		  font-size: 1rem;
-		  font-weight: 600;
-		  color: #495057;
-		  text-transform: uppercase;
-		  letter-spacing: 0.5px;
-		}
+		  /* Blue→Green like your Resume title */
+		  .text-gradient-primary {
+			background: linear-gradient(135deg, #0d6efd, #20c997);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
+		  }
 
-		.skill-group {
-		  margin-bottom: 1rem;
-		}
+		  /* Optional: unify chip look & spacing */
+		  .skill-badge, .lang-badge {
+			display:inline-block; background:#f8f9fa; border:1px solid #dee2e6;
+			border-radius: 999px; padding: 6px 14px; margin: 4px 6px 0 0;
+			font-size:.9rem; color:#343a40; transition: transform .15s ease, background .15s ease;
+		  }
+		  .skill-badge:hover, .lang-badge:hover { background:#eef1f4; transform: translateY(-1px); }
 
-		.skill-badge {
-		  display: inline-block;
-		  background-color: #f8f9fa;
-		  border-radius: 20px;
-		  padding: 6px 14px;
-		  margin: 4px 6px 0 0;
-		  font-size: 0.9rem;
-		  color: #343a40;
-		  border: 1px solid #dee2e6;
-		  transition: all 0.2s ease-in-out;
-		}
-		.skill-badge:hover {
-		  background-color: #e9ecef;
-		  border-color: #ced4da;
-		  transform: translateY(-1px);
-		}
+		  /* Subcategory label */
+		  .skills-section h5 { margin-top:1rem; font-size:1rem; font-weight:600; color:#495057; letter-spacing:.4px; }
+		  .skill-group { margin-bottom: 1rem; }
+
+		  /* Make the small square icon use the same gradient */
+		  .feature-gradient {
+			background: linear-gradient(135deg, #0d6efd, #20c997);
+			color:#fff; width:44px; height:44px; display:flex; align-items:center; justify-content:center;
+			border-radius:.75rem;
+		  }
 		</style>
     </head>
     <body class="d-flex flex-column h-100 bg-light">
@@ -219,13 +215,14 @@
                         <section>
 							<!-- Skillset Card (categorized) -->
 							<div class="card shadow border-0 rounded-4 mb-5">
-							  <div class="card-body p-4 skills-section">
-								<h3 class="fw-bolder text-gradient mb-4">
-								  <i class="bi bi-tools me-2"></i> Professional Skills
-								</h3>
+							  <div class="card-body p-5 skills-section">
+								<div class="d-flex align-items-center mb-3">
+								  <div class="feature-gradient me-3"><i class="bi bi-tools"></i></div>
+								  <h3 class="fw-bolder mb-0"><span class="text-gradient-primary d-inline">Professional Skills</span></h3>
+								</div>
 
 								<div class="skill-group">
-								  <h5>Programming Languages</h5>
+								  <h5 class="text-uppercase">Programming Languages</h5>
 								  <span class="skill-badge">Python</span>
 								  <span class="skill-badge">Java</span>
 								  <span class="skill-badge">R</span>
@@ -233,14 +230,14 @@
 								</div>
 
 								<div class="skill-group">
-								  <h5>Cloud Services</h5>
+								  <h5 class="text-uppercase">Cloud Services</h5>
 								  <span class="skill-badge">AWS</span>
 								  <span class="skill-badge">Azure</span>
 								  <span class="skill-badge">Databricks</span>
 								</div>
 
 								<div class="skill-group">
-								  <h5>Tools & Frameworks</h5>
+								  <h5 class="text-uppercase">Tools &amp; Frameworks</h5>
 								  <span class="skill-badge">TensorFlow</span>
 								  <span class="skill-badge">Power BI</span>
 								  <span class="skill-badge">Docker</span>
@@ -251,7 +248,7 @@
 								</div>
 
 								<div class="skill-group">
-								  <h5>Machine Learning</h5>
+								  <h5 class="text-uppercase">Machine Learning</h5>
 								  <span class="skill-badge">Generative AI</span>
 								  <span class="skill-badge">Large Language Models (LLMs)</span>
 								  <span class="skill-badge">RAG</span>
@@ -260,8 +257,8 @@
 								  <span class="skill-badge">Computer Vision</span>
 								</div>
 
-								<div class="skill-group">
-								  <h5>Additional</h5>
+								<div class="skill-group mb-0">
+								  <h5 class="text-uppercase">Additional</h5>
 								  <span class="skill-badge">Data Visualization</span>
 								  <span class="skill-badge">Agile / SCRUM</span>
 								  <span class="skill-badge">Software Architecture</span>
@@ -269,6 +266,20 @@
 							  </div>
 							</div>
                         </section>
+						<div class="card shadow border-0 rounded-4">
+						  <div class="card-body p-5">
+							<div class="d-flex align-items-center mb-3">
+							  <div class="feature-gradient me-3"><i class="bi bi-translate"></i></div>
+							  <h3 class="fw-bolder mb-0"><span class="text-gradient-primary d-inline">Spoken Languages</span></h3>
+							</div>
+
+							<div class="d-flex flex-wrap">
+							  <span class="lang-badge">Arabic (Native)</span>
+							  <span class="lang-badge">English (Fluent)</span>
+							  <span class="lang-badge">German (Intermediate)</span>
+							</div>
+						  </div>
+						</div>
                     </div>
                 </div>
             </div>
