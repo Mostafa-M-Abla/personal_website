@@ -27,6 +27,13 @@
 
       body{font-family:"Plus Jakarta Sans",sans-serif;background:#f6f7fb;}
 
+      /* NEW: narrow, centered column for project cards */
+      .portfolio-wrap{
+        max-width: 960px;   /* try 900–960 for the look you want */
+        margin: 0 auto;
+        width: 100%;
+      }
+
       .text-gradient{
         background:linear-gradient(135deg,var(--brand-primary),var(--brand-secondary));
         -webkit-background-clip:text;background-clip:text;color:transparent;
@@ -123,76 +130,81 @@
             <h1 class="display-5 fw-bolder mb-0"><span class="text-gradient d-inline">Projects</span></h1>
           </div>
 
-          <!-- Card 1 -->
-          <div class="project-card project-car mb-4">
-            <div class="card-row">
-              <div class="text-side">
-                <div class="project-content">
-                  <h2 class="project-title">🚗 Car Advisor Chatbot</h2>
-                  <p class="project-desc">AI chatbot that helps users choose cars by understanding preferences, features, and budgets.</p>
-                  <div class="meta">
-                    <span class="badge rounded-pill badge-soft">NLP</span>
-                    <span class="badge rounded-pill badge-soft">Retrieval</span>
-                    <span class="badge rounded-pill badge-soft">Gradio</span>
+          <!-- NARROW CENTERED WRAP: only the cards go inside -->
+          <div class="portfolio-wrap">
+
+            <!-- Card 1 -->
+            <div class="project-card project-car mb-4">
+              <div class="card-row">
+                <div class="text-side">
+                  <div class="project-content">
+                    <h2 class="project-title">🚗 Car Advisor Chatbot</h2>
+                    <p class="project-desc">AI chatbot that helps users choose cars by understanding preferences, features, and budgets.</p>
+                    <div class="meta">
+                      <span class="badge rounded-pill badge-soft">NLP</span>
+                      <span class="badge rounded-pill badge-soft">Retrieval</span>
+                      <span class="badge rounded-pill badge-soft">Gradio</span>
+                    </div>
+                    <a href="https://mostafa-abla-portfolio-huggingface-gradio.hf.space/?page=car" class="btn btn-ghost mt-3">
+                      View project <i class="bi bi-arrow-right-short"></i>
+                    </a>
                   </div>
-                  <a href="https://mostafa-abla-portfolio-huggingface-gradio.hf.space/?page=car" class="btn btn-ghost mt-3">
-                    View project <i class="bi bi-arrow-right-short"></i>
-                  </a>
+                </div>
+                <div class="thumb-wrap">
+                  <img class="thumb" src="assets/car_app_logo.png" alt="Car Advisor App" />
                 </div>
               </div>
-              <div class="thumb-wrap">
-                <img class="thumb" src="assets/car_app_logo.png" alt="Car Advisor App" />
-              </div>
             </div>
-          </div>
 
-          <!-- Card 2 -->
-          <div class="project-card project-garb mb-4">
-            <div class="card-row">
-              <div class="text-side">
-                <div class="project-content">
-                  <h2 class="project-title">🧠 Garbage Classification</h2>
-                  <p class="project-desc">Image classification app that predicts 12 garbage classes from photos.</p>
-                  <div class="meta">
-                    <span class="badge rounded-pill badge-soft">CNN</span>
-                    <span class="badge rounded-pill badge-soft">Computer Vision</span>
-                    <span class="badge rounded-pill badge-soft">Hugging Face</span>
+            <!-- Card 2 -->
+            <div class="project-card project-garb mb-4">
+              <div class="card-row">
+                <div class="text-side">
+                  <div class="project-content">
+                    <h2 class="project-title">🧠 Garbage Classification</h2>
+                    <p class="project-desc">Image classification app that predicts 12 garbage classes from photos.</p>
+                    <div class="meta">
+                      <span class="badge rounded-pill badge-soft">CNN</span>
+                      <span class="badge rounded-pill badge-soft">Computer Vision</span>
+                      <span class="badge rounded-pill badge-soft">Hugging Face</span>
+                    </div>
+                    <a href="https://mostafa-abla-garbage-classification.hf.space" class="btn btn-ghost mt-3">
+                      View project <i class="bi bi-arrow-right-short"></i>
+                    </a>
                   </div>
-                  <a href="https://mostafa-abla-garbage-classification.hf.space" class="btn btn-ghost mt-3">
-                    View project <i class="bi bi-arrow-right-short"></i>
-                  </a>
+                </div>
+                <div class="thumb-wrap">
+                  <img class="thumb" src="assets/garbage_app_logo.png" alt="Garbage Classification App" />
                 </div>
               </div>
-              <div class="thumb-wrap">
-                <img class="thumb" src="assets/garbage_app_logo.png" alt="Garbage Classification App" />
-              </div>
             </div>
-          </div>
 
-          <!-- Card 3 -->
-          <div class="project-card project-intvw mb-5">
-            <div class="card-row">
-              <div class="text-side">
-                <div class="project-content">
-                  <h2 class="project-title">💼 Job Interview Chatbot</h2>
-                  <p class="project-desc">An interactive chatbot that answers typical interview questions about Mostafa Abla.</p>
-                  <div class="meta">
-                    <span class="badge rounded-pill badge-soft">Agent</span>
-                    <span class="badge rounded-pill badge-soft">Prompting</span>
-                    <span class="badge rounded-pill badge-soft">Gradio</span>
+            <!-- Card 3 -->
+            <div class="project-card project-intvw mb-5">
+              <div class="card-row">
+                <div class="text-side">
+                  <div class="project-content">
+                    <h2 class="project-title">💼 Job Interview Chatbot</h2>
+                    <p class="project-desc">An interactive chatbot that answers typical interview questions about Mostafa Abla.</p>
+                    <div class="meta">
+                      <span class="badge rounded-pill badge-soft">Agent</span>
+                      <span class="badge rounded-pill badge-soft">Prompting</span>
+                      <span class="badge rounded-pill badge-soft">Gradio</span>
+                    </div>
+                    <a href="https://mostafa-abla-portfolio-huggingface-gradio.hf.space/?page=interview" class="btn btn-ghost mt-3">
+                      View project <i class="bi bi-arrow-right-short"></i>
+                    </a>
                   </div>
-                  <a href="https://mostafa-abla-portfolio-huggingface-gradio.hf.space/?page=interview" class="btn btn-ghost mt-3">
-                    View project <i class="bi bi-arrow-right-short"></i>
-                  </a>
+                </div>
+                <div class="thumb-wrap">
+                  <img class="thumb" src="assets/interview_app.png" alt="Interview Chatbot" />
                 </div>
               </div>
-              <div class="thumb-wrap">
-                <img class="thumb" src="assets/interview_app.png" alt="Interview Chatbot" />
-              </div>
             </div>
-          </div>
 
-          <!-- CTA -->
+          </div><!-- /portfolio-wrap -->
+
+          <!-- CTA stays full-width for nice contrast -->
           <section class="py-5 bg-gradient-primary-to-secondary text-white rounded-4">
             <div class="container px-4">
               <div class="text-center">
