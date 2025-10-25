@@ -308,6 +308,16 @@ svg {
   vertical-align: middle;
 }
 
+/* ==== Home hero tweaks ==== */
+.hero-photo { max-width: 560px; border-radius: 2rem; }
+.hero-photo .profile-img { width: 78%; }           /* smaller image */
+@media (min-width: 992px) { .hero-photo { margin-left: auto; } }  /* push right on large screens */
+
+/* Optional: make brand name look clearly clickable */
+.navbar-brand { text-decoration: none; }
+.navbar-brand:hover { opacity: 0.9; }
+
+
 table {
   caption-side: bottom;
   border-collapse: collapse;
