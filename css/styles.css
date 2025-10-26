@@ -3814,6 +3814,20 @@ textarea.form-control-lg {
   padding-bottom: 0.5rem;
   color: var(--bs-navbar-color);
 }
+
+	  /* Increase navbar text size and make it bold */
+	  .navbar .nav-link,
+	  .navbar-brand {
+		font-size: 1.1rem;      /* Increase text size */
+		font-weight: bold;      /* Make text bold */
+	  }
+
+	  /* Override Bootstrap's .small class */
+	  .navbar .small {
+		font-size: 1rem !important;
+		font-weight: bold !important;
+	  }
+	  
 .navbar-text a,
 .navbar-text a:hover,
 .navbar-text a:focus {
