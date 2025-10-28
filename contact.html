@@ -87,16 +87,8 @@
             <div class="row gx-5 justify-content-center">
               <div class="col-lg-8 col-xl-6">
                 <!-- Contact Form (FormSubmit version) -->
-                <form action="https://formsubmit.co/963ede17ce6bfe95b1969cc94a7f0131" method="POST">
-                  <!-- Anti-spam honeypot -->
-                  <input type="text" name="_honey" style="display:none">
-                  <!-- Disable captcha (optional) -->
-                  <input type="hidden" name="_captcha" value="false">
-                  <!-- Redirect after success -->
-                  <input type="hidden" name="_next" value="https://mostafaabla.com/thank-you.html">
-                  <!-- Custom email subject -->
-                  <input type="hidden" name="_subject" value="New message from your portfolio site">
-
+				<form action="https://api.web3forms.com/submit" method="POST">
+				  <input type="hidden" name="access_key" value="30d72db6-bea1-4beb-bbe6-fa5a8d4972d0">
                   <!-- Name -->
                   <div class="form-floating mb-3">
                     <input class="form-control" id="name" name="name" type="text" placeholder="Enter your name..." required />
@@ -120,6 +112,9 @@
                     <textarea class="form-control" id="message" name="message" placeholder="Enter your message here..." style="height: 10rem" required></textarea>
                     <label for="message">Message</label>
                   </div>
+
+                  <!-- Redirect on success -->
+                  <input type="hidden" name="redirect" value="https://mostafaabla.com/thank-you.html">
 
                   <!-- Submit Button -->
                   <div class="d-grid">
