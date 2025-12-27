@@ -54,9 +54,10 @@
       }
 
       .project-car{background-image:linear-gradient(135deg,rgba(78,115,223,.08),transparent);}
-      .project-garb{background-image:linear-gradient(135deg,rgba(28,200,138,.08),transparent);}
+      .project-garb{background-image:linear-gradient(135deg,rgba(255, 235, 150, 0.15),transparent);}
       .project-intvw{background-image:linear-gradient(135deg,rgba(111,66,193,.10),transparent);}
-
+	  .project-rag{background-image: linear-gradient(135deg,rgba(28,200,138,.08),transparent);
+}
       .project-content{padding:2rem 2.25rem;}
       .project-title{color:var(--text-strong);font-weight:800;letter-spacing:.2px;margin:0 0 .25rem;}
       .project-desc{color:var(--text-muted);margin:0;}
@@ -197,8 +198,32 @@
                 </div>
               </div>
             </div>
+			
+			<!-- Card 2 -->
+            <div class= "project-card project-rag mb-4"
+				onclick="window.location.href='https://mostafa-abla-portfolio-huggingface-gradio.hf.space/?page=rag'"  
+				style="cursor:pointer;">
+              <div class="card-row">
+                <div class="text-side">
+                  <div class="project-content">
+                    <h2 class="project-title">📚 RAG Research Papers Chatbot</h2>
+                    <p class="project-desc">Chatbot that uses a RAG Pipeline to answer questions about Research Papers.</p>
+                    <div class="meta">
+                      <span class="badge rounded-pill badge-soft">RAG</span>
+                      <span class="badge rounded-pill badge-soft">Vector Store Index</span>
+                    </div>
+                    <a href="https://mostafa-abla-portfolio-huggingface-gradio.hf.space/?page=rag" class="btn btn-ghost mt-3">
+                      View project <i class="bi bi-arrow-right-short"></i>
+                    </a>
+                  </div>
+                </div>
+                <div class="thumb-wrap">
+                  <img class="thumb" src="assets/rag_app_logo.png" alt="Garbage Classification App" />
+                </div>
+              </div>
+            </div>
 
-            <!-- Card 2 -->
+            <!-- Card 3 -->
             <div class= "project-card project-garb mb-4"
 				onclick="window.location.href='https://mostafa-abla-garbage-classification.hf.space'" 
 				style="cursor:pointer;">
@@ -223,7 +248,7 @@
               </div>
             </div>
 
-            <!-- Card 3 -->
+            <!-- Card 4 -->
             <div class="project-card project-intvw mb-5"
 				onclick="window.location.href='https://mostafa-abla-portfolio-huggingface-gradio.hf.space/?page=interview'" 
 				style="cursor:pointer;">
