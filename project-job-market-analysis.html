@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Job Market Multi‑Agent Analysis – Mostafa Abla</title>
+
+    <!-- Google font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Bootstrap + icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <!-- Inline styles (keeps the same look & feel as projects.html) -->
+    <style>
+      :root{
+        --brand-primary:#4e73df;
+        --brand-secondary:#1cc88a;
+        --text-strong:#243041;
+        --text-muted:#6c757d;
+        --card-bg:#ffffff;
+        --thumb-bg:#f1f3f5;
+      }
+
+      body{font-family:"Plus Jakarta Sans",sans-serif;background:#f6f7fb;}
+
+      .page-wrap{max-width: 1040px;margin:0 auto;width:100%;}
+
+      .text-gradient{
+        background:linear-gradient(135deg,var(--brand-primary),var(--brand-secondary));
+        -webkit-background-clip:text;background-clip:text;color:transparent;
+      }
+
+      .soft-card{
+        border:0;border-radius:1.25rem;
+        background:var(--card-bg);
+        box-shadow:0 6px 16px rgba(18,38,63,.06);
+        overflow:hidden;
+      }
+
+      .section-card{
+        border:0;border-radius:1.25rem;
+        background:var(--card-bg);
+        box-shadow:0 6px 16px rgba(18,38,63,.06);
+        overflow:hidden;
+        border-left:6px solid var(--brand-primary);
+      }
+
+      .section-hd{
+        padding: 1.6rem 1.8rem 1.1rem;
+        background: linear-gradient(135deg, rgba(78,115,223,.08), transparent);
+        border-bottom: 1px solid rgba(36,48,65,.08);
+      }
+
+      .section-bd{ padding: 1.4rem 1.8rem 1.7rem; }
+
+      .badge-soft{
+        background:rgba(36,48,65,.06);
+        color:#415065;border:1px solid rgba(36,48,65,.08);
+        font-weight:700;
+      }
+
+      .btn-ghost{
+        --bs-btn-color:var(--brand-primary);
+        --bs-btn-border-color:var(--brand-primary);
+        --bs-btn-hover-color:#fff;
+        --bs-btn-hover-bg:var(--brand-primary);
+        --bs-btn-hover-border-color:var(--brand-primary);
+        border-radius:999px;
+        font-weight:800;
+        padding:.6rem 1.2rem;
+      }
+
+      .btn-solid{
+        border-radius:999px;
+        font-weight:800;
+        padding:.65rem 1.25rem;
+      }
+
+      .mono{
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      /* --- Architecture diagram --- */
+      .diagram-wrap{background: #fbfcff;border:1px solid rgba(36,48,65,.10);border-radius:1rem;padding:1rem;overflow:auto;}
+      svg{max-width:100%;height:auto;}
+
+      /* --- Report preview --- */
+      .report-frame{
+        width:100%;
+        border:1px solid rgba(36,48,65,.10);
+        border-radius: 1rem;
+        background:#fff;
+        box-shadow: 0 6px 16px rgba(18,38,63,.06);
+      }
+
+      .hint{color:var(--text-muted);}
+
+      /* Navbar tweaks (match projects.html hover behavior) */
+      .navbar-brand { text-decoration:none; }
+      .navbar-brand:hover { opacity:0.9; font-weight:700 !important; font-size:1.75rem; }
+      .navbar-nav .nav-link { font-weight:700 !important; font-size:1.1rem; }
+
+      
+      /* Gradient helper used by CTA (matches the template utility class) */
+      .bg-gradient-primary-to-secondary{
+        background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      }
+
+      @media (max-width: 992px){
+        .section-hd{padding:1.25rem 1.25rem .9rem}
+        .section-bd{padding:1.1rem 1.25rem 1.35rem}
+      }
+    </style>
+  </head>
+
+  <body class="d-flex flex-column min-vh-100">
+    <main class="flex-shrink-0">
+
+      <!-- Navigation (reused from projects.html for consistency) -->
+      <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+		  <div class="container px-5">
+			<!-- Brand / Home link -->
+			<a class="navbar-brand fw-bolder text-primary" href="index.html" style="font-size: 1.35rem;">Mostafa Abla</a>
+
+			<button
+			  class="navbar-toggler"
+			  type="button"
+			  data-bs-toggle="collapse"
+			  data-bs-target="#navbarSupportedContent"
+			  aria-controls="navbarSupportedContent"
+			  aria-expanded="false"
+			  aria-label="Toggle navigation"
+			>
+			  <span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			  <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder align-items-center">
+			    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+				<li class="nav-item"><a class="nav-link" href="resume.html">Resume</a></li>
+				<li class="nav-item"><a class="nav-link" href="projects.html">Projects</a></li>
+				<li class="nav-item">
+				  <a class="nav-link me-3" href="contact.html">Contact</a>
+				</li>
+
+				<!-- LinkedIn -->
+				<li class="nav-item">
+				  <a href="http://linkedin.com/in/mostafa-abla-984a5820a/" target="_blank" class="nav-link text-primary me-1">
+					<i class="bi bi-linkedin" style="font-size: 1.3rem;"></i>
+				  </a>
+				</li>
+
+				<!-- GitHub -->
+				<li class="nav-item">
+				  <a href="https://github.com/Mostafa-M-Abla" target="_blank" class="nav-link text-dark">
+					<i class="bi bi-github" style="font-size: 1.3rem;"></i>
+				  </a>
+				</li>
+			  </ul>
+			</div>
+		  </div>
+		</nav>
+
+      <!-- Hero -->
+      <header class="py-5">
+        <div class="container px-4 px-md-5">
+          <div class="page-wrap">
+            <div class="soft-card p-4 p-md-5">
+              <div class="d-flex flex-column flex-lg-row gap-4 align-items-start align-items-lg-center justify-content-between">
+                <div style="flex:1;">
+                  <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge rounded-pill badge-soft"><i class="bi bi-diagram-3 me-1"></i>Multi‑Agent</span>
+                    <span class="badge rounded-pill badge-soft"><i class="bi bi-robot me-1"></i>CrewAI</span>
+                    <span class="badge rounded-pill badge-soft"><i class="bi bi-bar-chart-line me-1"></i>Job Market Intel</span>
+                  </div>
+                  <h1 class="display-6 fw-bolder mb-2"><span class="text-gradient d-inline">Job Market Multi‑Agent Analysis</span></h1>
+                  <p class="mb-0 hint fs-5">
+                    A sequential CrewAI workflow that collects real job postings, extracts market requirements, compares them to a resume, and generates
+                    <b>personalized upskilling recommendations</b>—ending with a polished HTML report.
+                  </p>
+                </div>
+
+                <div class="d-flex flex-column gap-2" style="min-width: 260px;">
+                  <a class="btn btn-primary btn-solid" href="job_market_report.html">
+                    Open sample report <i class="bi bi-box-arrow-up-right ms-1"></i>
+                  </a>
+                  <a class="btn btn-outline-primary btn-ghost" href="projects.html">
+                    Back to Projects <i class="bi bi-arrow-right-short"></i>
+                  </a>
+                  <div class="small hint">
+                    <i class="bi bi-clock me-1"></i>Full run ~10 minutes (due to data collection + multi‑step analysis)
+                  </div>
+                </div>
+              </div>
+
+              <hr class="my-4" />
+
+              <div class="row g-3">
+                <div class="col-md-4">
+                  <div class="p-3 rounded-4" style="background:rgba(78,115,223,.06);">
+                    <div class="fw-bolder mb-1"><i class="bi bi-people me-1"></i>Who it’s for</div>
+                    <div class="small hint mb-0">Job applicants who want a realistic view of what employers ask for—and what to learn next.</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-3 rounded-4" style="background:rgba(28,200,138,.08);">
+                    <div class="fw-bolder mb-1"><i class="bi bi-bullseye me-1"></i>What it delivers</div>
+                    <div class="small hint mb-0">Top in‑demand skills, cloud/platform trends, and a ranked “next skills” plan.</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="p-3 rounded-4" style="background:rgba(111,66,193,.08);">
+                    <div class="fw-bolder mb-1"><i class="bi bi-filetype-html me-1"></i>Output artifact</div>
+                    <div class="small hint mb-0">A shareable, recruiter‑friendly HTML report (plus JSON/MD traces in <span class="mono">outputs/</span>).</div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <section class="pb-5">
+        <div class="container px-4 px-md-5">
+          <div class="page-wrap">
+
+            <!-- Why static -->
+            <div class="section-card mb-4">
+              <div class="section-hd">
+                <h2 class="h4 fw-bolder mb-1">Why this page is static (and that’s intentional)</h2>
+                <p class="mb-0 hint">This workflow takes ~10 minutes end‑to‑end, so this page focuses on the architecture and a real sample report instead of an interactive demo.</p>
+              </div>
+              <div class="section-bd">
+                <div class="row g-3">
+                  <div class="col-lg-6">
+                    <div class="p-3 rounded-4" style="border:1px solid rgba(36,48,65,.10);background:#fbfcff;">
+                      <div class="fw-bolder mb-1"><i class="bi bi-check2-circle me-1"></i>Recruiter-friendly</div>
+                      <div class="small hint mb-0">Shows the “what” and “how” in under a minute: clear pipeline, outputs, and engineering choices.</div>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="p-3 rounded-4" style="border:1px solid rgba(36,48,65,.10);background:#fbfcff;">
+                      <div class="fw-bolder mb-1"><i class="bi bi-shield-check me-1"></i>Realistic & reproducible</div>
+                      <div class="small hint mb-0">Uses real postings (SerpAPI Google Jobs) and produces an HTML artifact you can share or version.</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Architecture -->
+            <div class="section-card mb-4">
+              <div class="section-hd">
+                <h2 class="h4 fw-bolder mb-1">Crew architecture</h2>
+                <p class="mb-0 hint">
+                  The workflow is a <b>sequential CrewAI process</b>. Each agent owns a single responsibility and passes structured context to the next task.
+                </p>
+              </div>
+              <div class="section-bd">
+                <div class="diagram-wrap">
+                  <!-- Simple inline SVG diagram (no external libs) -->
+                  <svg viewBox="0 0 1200 540" role="img" aria-label="CrewAI architecture diagram">
+                    <defs>
+                      <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0" stop-color="#4e73df" stop-opacity="0.22"/>
+                        <stop offset="1" stop-color="#1cc88a" stop-opacity="0.18"/>
+                      </linearGradient>
+                      <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#12263f" flood-opacity="0.12"/>
+                      </filter>
+                      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563"/>
+                      </marker>
+                    </defs>
+
+                    <rect x="20" y="20" width="1160" height="500" rx="18" fill="url(#g1)" stroke="rgba(36,48,65,.18)" />
+
+                    <!-- Columns -->
+                    <text x="70" y="70" font-size="18" font-family="Plus Jakarta Sans" font-weight="800" fill="#243041">Data Collection</text>
+                    <text x="430" y="70" font-size="18" font-family="Plus Jakarta Sans" font-weight="800" fill="#243041">Extraction & Analysis</text>
+                    <text x="830" y="70" font-size="18" font-family="Plus Jakarta Sans" font-weight="800" fill="#243041">Recommendations & Report</text>
+
+                    <!-- Boxes helper -->
+                    <g font-family="Plus Jakarta Sans" fill="#243041">
+                      <!-- 1 -->
+                      <g filter="url(#shadow)">
+                        <rect x="60" y="100" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
+                      </g>
+                      <text x="85" y="135" font-size="16" font-weight="800">Agent 1 — Job Postings Finder</text>
+                      <text x="85" y="158" font-size="13" fill="#6c757d">Tool: GoogleJobsCollectorTool</text>
+                      <text x="85" y="178" font-size="12" fill="#6c757d">Output: JSON list of job postings</text>
+
+                      <!-- 2 -->
+                      <g filter="url(#shadow)">
+                        <rect x="420" y="100" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
+                      </g>
+                      <text x="445" y="135" font-size="16" font-weight="800">Agent 2 — Requirements Extractor</text>
+                      <text x="445" y="158" font-size="13" fill="#6c757d">Skills/tools, cloud, certs (strict JSON)</text>
+                      <text x="445" y="178" font-size="12" fill="#6c757d">Per posting: deduped, explicit mentions only</text>
+
+                      <!-- 3 -->
+                      <g filter="url(#shadow)">
+                        <rect x="420" y="220" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
+                      </g>
+                      <text x="445" y="255" font-size="16" font-weight="800">Agent 3 — Requirements Analyzer</text>
+                      <text x="445" y="278" font-size="13" fill="#6c757d">Synonym grouping + frequency stats</text>
+                      <text x="445" y="298" font-size="12" fill="#6c757d">Output: market summary (MD)</text>
+
+                      <!-- 4 -->
+                      <g filter="url(#shadow)">
+                        <rect x="60" y="220" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
+                      </g>
+                      <text x="85" y="255" font-size="16" font-weight="800">Agent 4 — Resume Content Extractor</text>
+                      <text x="85" y="278" font-size="13" fill="#6c757d">Tool: ResumePDFTextTool</text>
+                      <text x="85" y="298" font-size="12" fill="#6c757d">Output: resume skills/cloud/certs (JSON)</text>
+
+                      <!-- 5 -->
+                      <g filter="url(#shadow)">
+                        <rect x="820" y="100" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
+                      </g>
+                      <text x="845" y="135" font-size="16" font-weight="800">Agent 5 — Resume Booster Specialist</text>
+                      <text x="845" y="158" font-size="13" fill="#6c757d">Gap analysis → top 5 learning targets</text>
+                      <text x="845" y="178" font-size="12" fill="#6c757d">Includes frequencies from market data</text>
+
+                      <!-- 6 -->
+                      <g filter="url(#shadow)">
+                        <rect x="820" y="220" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
+                      </g>
+                      <text x="845" y="255" font-size="16" font-weight="800">Agent 6 — HTML Report Writer</text>
+                      <text x="845" y="278" font-size="13" fill="#6c757d">Tool: SaveHTMLTool</text>
+                      <text x="845" y="298" font-size="12" fill="#6c757d">Output: polished report (HTML)</text>
+                    </g>
+
+                    <!-- Arrows -->
+                    <g stroke="#4b5563" stroke-width="2.2" fill="none" marker-end="url(#arrow)">
+                      <!-- Task 1 -> Task 2 -->
+                      <path d="M 380 145 L 420 145" />
+                      <!-- Task 2 -> Task 3 -->
+                      <path d="M 580 190 L 580 220" />
+
+                      <!-- Task 3 -> Task 5 (market analysis -> recommendations) -->
+                      <path d="M 740 265 L 780 265 L 780 185 L 820 185" />
+
+                      <!-- Task 4 -> Task 5 (resume extraction -> recommendations) -->
+                      <path d="M 380 265 L 780 265 L 780 145 L 820 145" />
+
+                      <!-- Task 5 -> Task 6 (recommendations -> report) -->
+                      <path d="M 980 190 L 980 220" />
+
+                      <!-- Task 3 -> Task 6 (market analysis -> report) -->
+                      <path d="M 740 265 L 820 265" />
+                    </g>
+
+                    <!-- Legend -->
+                    <g font-family="Plus Jakarta Sans">
+                      <rect x="60" y="350" width="1080" height="150" rx="16" fill="#ffffff" opacity="0.95" stroke="rgba(36,48,65,.14)"/>
+                      <text x="85" y="385" font-size="15" font-weight="800" fill="#243041">Key design choices</text>
+                      <text x="85" y="412" font-size="12.5" fill="#6c757d">• Single-responsibility agents + structured handoffs (JSON/MD) keeps outputs debuggable and reduces prompt drift.</text>
+                      <text x="85" y="434" font-size="12.5" fill="#6c757d">• Per-posting de-duplication and synonym grouping creates more reliable frequency stats.</text>
+                      <text x="85" y="456" font-size="12.5" fill="#6c757d">• Final artifact is an HTML report: easy to share, archive, and compare across dates/locations/titles.</text>
+                      <text x="85" y="478" font-size="12.5" fill="#6c757d">• Tools are isolated: SerpAPI collection, PDF extraction, and report saving are modular and testable.</text>
+                    </g>
+                  </svg>
+                </div>
+
+                <div class="mt-3 small hint">
+                  Each box maps to a CrewAI Agent and its corresponding Task in <span class="mono">build_crew.py</span>.</div>
+              </div>
+            </div>
+
+            <!-- Deep dive -->
+            <div class="section-card mb-4">
+              <div class="section-hd">
+                <h2 class="h4 fw-bolder mb-1">How it works (deeper explanation)</h2>
+                <p class="mb-0 hint">From raw postings to a focused learning plan—in six deterministic steps.</p>
+              </div>
+              <div class="section-bd">
+                <ol class="mb-0">
+                  <li class="mb-2">
+                    <b>Collect postings</b> for target titles/country via SerpAPI Google Jobs (structured title/company/location/description).
+                  </li>
+                  <li class="mb-2">
+                    <b>Extract requirements</b> from each description into a strict schema: <span class="mono">technical_skills</span>, <span class="mono">cloud_platforms</span>, <span class="mono">certifications</span>.
+                  </li>
+                  <li class="mb-2">
+                    <b>Aggregate & normalize</b> across roles: synonym grouping, per-post deduplication, and frequency stats (% of postings).
+                  </li>
+                  <li class="mb-2">
+                    <b>Parse resume</b> (PDF → text) and extract existing skills/certs/cloud to build an “as‑is” profile.
+                  </li>
+                  <li class="mb-2">
+                    <b>Gap analysis</b>: compare “market needs” vs. “resume skills” and rank the next 5 highest‑impact learning targets.
+                  </li>
+                  <li>
+                    <b>Generate an HTML report</b>: charts/tables + a readable narrative, saved as a standalone artifact.
+                  </li>
+                </ol>
+              </div>
+            </div>
+
+            <!-- Report display -->
+            <div class="section-card mb-5">
+              <div class="section-hd">
+                <h2 class="h4 fw-bolder mb-1">Sample output</h2>
+                <p class="mb-0 hint">Preview the generated HTML report from a real run. Use the inline preview for a quick skim, or open the full report in a new tab.</p>
+              </div>
+              <div class="section-bd">
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                  <a class="btn btn-primary btn-solid" href="job_market_report.html">
+                    Open full report <i class="bi bi-box-arrow-up-right ms-1"></i>
+                  </a>
+                  <button class="btn btn-outline-primary btn-ghost" type="button" data-bs-toggle="collapse" data-bs-target="#inlineReport" aria-expanded="true" aria-controls="inlineReport">
+                    Hide inline preview <i class="bi bi-chevron-up ms-1"></i>
+                  </button>
+                                  </div>
+
+                <div class="collapse show" id="inlineReport">
+                  <div class="ratio ratio-16x9">
+                    <iframe class="report-frame" title="Job Market Report Preview" src="job_market_report.html" loading="lazy"></iframe>
+                  </div>
+                  <div class="small hint mt-2">
+                    To show more content in the preview, switch the iframe to a fixed height (e.g., 650px) instead of a 16:9 ratio.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+            <div class="d-flex justify-content-center mb-5">
+              <a class="btn btn-outline-primary btn-ghost" href="projects.html">
+                View other projects <i class="bi bi-arrow-right-short"></i>
+              </a>
+            </div>
+
+            <!-- CTA -->
+            <section class="py-4 bg-gradient-primary-to-secondary text-white rounded-4">
+              <div class="container px-4">
+                <div class="text-center">
+                  <h2 class="display-6 fw-bolder mb-3">Want to see the code or discuss the design?</h2>
+                  <a class="btn btn-outline-light btn-lg px-5 py-3 fw-bolder rounded-pill" href="contact.html">
+                    Contact me
+                  </a>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer (reused from projects.html) -->
+    <footer class="bg-white py-4 mt-auto">
+		<div class="container px-5">
+			<div class="row align-items-center justify-content-between flex-column flex-sm-row">
+				<div class="col-auto"><div class="small m-0">Copyright &copy; Mostafa Abla 2025</div></div>
+				<div class="col-auto">
+					<a class="small" href="contact.html">Contact</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
