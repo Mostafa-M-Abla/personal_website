@@ -315,23 +315,34 @@
                          Row 3: A5 -> A6
                     -->
 
-                    <!-- Agent 1 -->
-                    <g>
-                      <rect class="node" x="60" y="70" width="340" height="150" />
-                      <text class="h1" x="85" y="102">Agent 1: Job Postings Finder</text>
-					  <text class="h2" x="85" y="140">
-						<tspan class="label">Task: Retrieve job postings matching the</tspan>
-						<tspan x="85" dy="18">
-						   requested titles and target country from Google 
-						</tspan>
-						<tspan x="85" dy="18">
-						   Jobs using SerpAPI.
-						</tspan>
-					  </tex>
-					  <text class="h2" x="85" y="220">
-						<tspan class="label">Output: Job Postings JSON</tspan>
+					<!-- Agent 1 -->
+					<g>
+					  <rect class="node" x="60" y="70" width="340" height="170" />
+
+					  <text class="h1" x="85" y="102">
+						Agent 1: Job Postings Finder
 					  </text>
-                    </g>
+
+					  <!-- Task -->
+					  <text class="h2" x="85" y="138">
+						<tspan class="label">Task:</tspan>
+						<tspan x="85" dy="18">
+						  Retrieve job postings matching the requested
+						</tspan>
+						<tspan x="85" dy="18">
+						  titles and target country from Google Jobs
+						</tspan>
+						<tspan x="85" dy="18">
+						  using SerpAPI.
+						</tspan>
+					  </text>
+
+					  <!-- Output (reduced spacing) -->
+					  <text class="h2" x="85" y="220">
+						<tspan class="label">Output:</tspan>
+						<tspan> Job Postings JSON</tspan>
+					  </text>
+					</g>
 
                     <!-- Agent 2 -->
                     <g>
