@@ -273,9 +273,9 @@
             <!-- Architecture (expanded diagram) -->
             <div class="section-card mb-4">
               <div class="section-hd">
-                <h2 class="h4 fw-bolder mb-1">Crew architecture</h2>
+                <h2 class="h4 fw-bolder mb-1">Crew Architecture</h2>
                 <p class="mb-0 hint">
-                  Everything is captured in one diagram: <b>Agent</b>, <b>Tool</b>, <b>Task</b>, and <b>Output</b>. Arrows show the data handoffs between tasks.
+                  The crew consists of 6 agents doing 6 tasks. The agents use a variety of tools to search for job postings, read the Resume pdf and to save files and the final Report locally.
                 </p>
               </div>
               <div class="section-bd">
@@ -478,17 +478,17 @@
                   <div class="row g-3">
                     <div class="col-lg-6">
                       <div class="p-3 rounded-4" style="background:rgba(78,115,223,.06); border:1px solid rgba(78,115,223,.10);">
-                        <div class="fw-bolder mb-1"><i class="bi bi-shield-check me-1"></i>Reliability choices</div>
+                        <div class="fw-bolder mb-1"><i class="bi bi-shield-check me-1"></i>Structured Handoffs</div>
                         <div class="small hint mb-0">
-                          Structured schemas + per-post deduplication reduce hallucinations and inflate counts less.
+                          Structured schemas (JSON/MD) → more debuggable, less prompt drift and less hallucinations.
                         </div>
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="p-3 rounded-4" style="background:rgba(28,200,138,.08); border:1px solid rgba(28,200,138,.14);">
-                        <div class="fw-bolder mb-1"><i class="bi bi-wallet2 me-1"></i>Cost &amp; runtime</div>
+                        <div class="fw-bolder mb-1"><i class="bi bi-wallet2 me-1"></i>Cost</div>
                         <div class="small hint mb-0">
-                          Real job postings + multi-step extraction makes the run slower; this page shows a pre-generated HTML report.
+                          It costs around <span class="fw-bold">0.5$</span> to run the whole system once. The cost is mainly <span class="fw-bold"> API calls to OpenAI LLM Models</span>.
                         </div>
                       </div>
                     </div>
@@ -507,15 +507,14 @@
               </div>
               <div class="section-bd">
                 <div class="d-flex flex-wrap gap-2 mb-3">
-                  <a class="btn btn-primary btn-solid" href="job_market_report.html">
-                    Open full report <i class="bi bi-box-arrow-up-right ms-1"></i>
-                  </a>
-
+                  <button id="btnFullscreenReport" class="btn btn-primary btn-solid" type="button">
+                    Full screen <i class="bi bi-arrows-fullscreen ms-1"></i>
+                  </button>
                 </div>
 
                 <div class="collapse show" id="inlineReport">
                   <div class="ratio ratio-16x9">
-                    <iframe class="report-frame" title="Job Market Report Preview" src="job_market_report.html" loading="lazy"></iframe>
+                    <iframe id="reportIframe" class="report-frame" title="Job Market Report Preview" src="job_market_report.html" loading="lazy"></iframe>
                   </div>
                 </div>
               </div>
@@ -543,5 +542,35 @@
 	</footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+    <script>
+      (function () {
+        const btn = document.getElementById('btnFullscreenReport');
+        const iframe = document.getElementById('reportIframe');
+        if (!btn || !iframe) return;
+
+        btn.addEventListener('click', async () => {
+          try {
+            if (document.fullscreenElement) {
+              await document.exitFullscreen();
+              return;
+            }
+            const el = iframe;
+            if (el.requestFullscreen) {
+              await el.requestFullscreen();
+            } else if (el.webkitRequestFullscreen) {
+              el.webkitRequestFullscreen();
+            } else if (el.msRequestFullscreen) {
+              el.msRequestFullscreen();
+            } else {
+              window.open('job_market_report.html', '_blank', 'noopener');
+            }
+          } catch (e) {
+            window.open('job_market_report.html', '_blank', 'noopener');
+          }
+        });
+      })();
+    </script>
+
   </body>
 </html>
