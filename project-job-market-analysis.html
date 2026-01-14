@@ -269,153 +269,166 @@
         <div class="container px-4 px-md-5">
           <div class="page-wrap">
 
-            <!-- Architecture -->
+            
+            <!-- Architecture (expanded diagram) -->
             <div class="section-card mb-4">
               <div class="section-hd">
                 <h2 class="h4 fw-bolder mb-1">Crew architecture</h2>
                 <p class="mb-0 hint">
-                  The workflow is a <b>sequential CrewAI process</b>. Each agent owns a single responsibility and passes structured context to the next task.
+                  Everything is captured in one diagram: <b>Agent</b>, <b>Tool</b>, <b>Task</b>, and <b>Output</b>. Arrows show the data handoffs between tasks.
                 </p>
               </div>
               <div class="section-bd">
                 <div class="diagram-wrap">
-                  <!-- Simple inline SVG diagram (no external libs) -->
-                  <svg viewBox="0 0 1200 540" role="img" aria-label="CrewAI architecture diagram">
+                  <svg viewBox="0 0 1200 620" role="img" aria-label="CrewAI architecture diagram (agent, tool, task, output)">
                     <defs>
                       <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
                         <stop offset="0" stop-color="#4e73df" stop-opacity="0.22"/>
                         <stop offset="1" stop-color="#1cc88a" stop-opacity="0.18"/>
                       </linearGradient>
                       <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#12263f" flood-opacity="0.12"/>
+                        <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#12263f" flood-opacity="0.12"/>
                       </filter>
-                      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto-start-reverse">
+                      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563"/>
                       </marker>
+                      <style>
+                        .pane{fill:url(#g1);stroke:rgba(36,48,65,.18);stroke-width:1.2;}
+                        .node{fill:#fff;stroke:rgba(36,48,65,.14);stroke-width:2;rx:18;filter:url(#shadow);}
+                        .h1{font:800 16px 'Plus Jakarta Sans', sans-serif; fill:#243041;}
+                        .h2{font:700 12.5px 'Plus Jakarta Sans', sans-serif; fill:#415065;}
+                        .t{font:600 12.5px 'Plus Jakarta Sans', sans-serif; fill:#6c757d;}
+                        .edge{stroke:#4b5563;stroke-width:2.2;fill:none;marker-end:url(#arrow);}
+                        .pill{font:800 12px 'Plus Jakarta Sans', sans-serif; fill:#415065;}
+                        .pillbox{fill:rgba(255,255,255,.85);stroke:rgba(36,48,65,.12);stroke-width:1;}
+                        .label{font:800 12px 'Plus Jakarta Sans', sans-serif; fill:#243041;}
+                        .k{font:800 12px 'Plus Jakarta Sans', sans-serif; fill:#4e73df;}
+                      </style>
                     </defs>
 
-                    <rect x="20" y="20" width="1160" height="500" rx="18" fill="url(#g1)" stroke="rgba(36,48,65,.18)" />
+                    <!-- Background -->
+                    <rect class="pane" x="18" y="18" width="1164" height="584" rx="18" />
 
-                    <!-- Columns -->
-                    <text x="70" y="70" font-size="18" font-family="Plus Jakarta Sans" font-weight="800" fill="#243041">Data Collection</text>
-                    <text x="430" y="70" font-size="18" font-family="Plus Jakarta Sans" font-weight="800" fill="#243041">Extraction & Analysis</text>
-                    <text x="830" y="70" font-size="18" font-family="Plus Jakarta Sans" font-weight="800" fill="#243041">Recommendations & Report</text>
+                    <!-- Layout:
+                         Row 1: A1 -> A2 -> A3
+                         Row 2: A4 ---------> (merge into A5)
+                         Row 3: A5 -> A6
+                    -->
 
-                    <!-- Boxes helper -->
-                    <g font-family="Plus Jakarta Sans" fill="#243041">
-                      <!-- 1 -->
-                      <g filter="url(#shadow)">
-                        <rect x="60" y="100" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
-                      </g>
-                      <text x="85" y="135" font-size="16" font-weight="800">Agent 1 — Job Postings Finder</text>
-                      <text x="85" y="158" font-size="13" fill="#6c757d">Tool: GoogleJobsCollectorTool</text>
-                      <text x="85" y="178" font-size="12" fill="#6c757d">Output: JSON list of job postings</text>
-
-                      <!-- 2 -->
-                      <g filter="url(#shadow)">
-                        <rect x="420" y="100" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
-                      </g>
-                      <text x="445" y="135" font-size="16" font-weight="800">Agent 2 — Requirements Extractor</text>
-                      <text x="445" y="158" font-size="13" fill="#6c757d">Skills/tools, cloud, certs (strict JSON)</text>
-                      <text x="445" y="178" font-size="12" fill="#6c757d">Per posting: deduped, explicit mentions only</text>
-
-                      <!-- 3 -->
-                      <g filter="url(#shadow)">
-                        <rect x="420" y="220" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
-                      </g>
-                      <text x="445" y="255" font-size="16" font-weight="800">Agent 3 — Requirements Analyzer</text>
-                      <text x="445" y="278" font-size="13" fill="#6c757d">Synonym grouping + frequency stats</text>
-                      <text x="445" y="298" font-size="12" fill="#6c757d">Output: market summary (MD)</text>
-
-                      <!-- 4 -->
-                      <g filter="url(#shadow)">
-                        <rect x="60" y="220" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
-                      </g>
-                      <text x="85" y="255" font-size="16" font-weight="800">Agent 4 — Resume Content Extractor</text>
-                      <text x="85" y="278" font-size="13" fill="#6c757d">Tool: ResumePDFTextTool</text>
-                      <text x="85" y="298" font-size="12" fill="#6c757d">Output: resume skills/cloud/certs (JSON)</text>
-
-                      <!-- 5 -->
-                      <g filter="url(#shadow)">
-                        <rect x="820" y="100" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
-                      </g>
-                      <text x="845" y="135" font-size="16" font-weight="800">Agent 5 — Resume Booster Specialist</text>
-                      <text x="845" y="158" font-size="13" fill="#6c757d">Gap analysis → top 5 learning targets</text>
-                      <text x="845" y="178" font-size="12" fill="#6c757d">Includes frequencies from market data</text>
-
-                      <!-- 6 -->
-                      <g filter="url(#shadow)">
-                        <rect x="820" y="220" width="320" height="90" rx="16" fill="#ffffff" stroke="rgba(36,48,65,.14)"/>
-                      </g>
-                      <text x="845" y="255" font-size="16" font-weight="800">Agent 6 — HTML Report Writer</text>
-                      <text x="845" y="278" font-size="13" fill="#6c757d">Tool: SaveHTMLTool</text>
-                      <text x="845" y="298" font-size="12" fill="#6c757d">Output: polished report (HTML)</text>
+                    <!-- Agent 1 -->
+                    <g>
+                      <rect class="node" x="60" y="70" width="340" height="150" />
+                      <text class="h1" x="85" y="102">Agent 1: Job Postings Finder</text>
+					  <text class="h2" x="85" y="140">
+						<tspan class="label">Task: Retrieve job postings matching the</tspan>
+						<tspan x="85" dy="18">
+						   requested titles and target country from Google 
+						</tspan>
+						<tspan x="85" dy="18">
+						   Jobs using SerpAPI.
+						</tspan>
+					  </tex>
+					  <text class="h2" x="85" y="220">
+						<tspan class="label">Output: Job Postings JSON</tspan>
+					  </text>
                     </g>
 
-                    <!-- Arrows -->
-                    <g stroke="#4b5563" stroke-width="2.2" fill="none" marker-end="url(#arrow)">
-                      <!-- Task 1 -> Task 2 -->
-                      <path d="M 380 145 L 420 145" />
-                      <!-- Task 2 -> Task 3 -->
-                      <path d="M 580 190 L 580 220" />
-
-                      <!-- Task 3 -> Task 5 (market analysis -> recommendations) -->
-                      <path d="M 740 265 L 780 265 L 780 185 L 820 185" />
-
-                      <!-- Task 4 -> Task 5 (resume extraction -> recommendations) -->
-                      <path d="M 380 265 L 780 265 L 780 145 L 820 145" />
-
-                      <!-- Task 5 -> Task 6 (recommendations -> report) -->
-                      <path d="M 980 190 L 980 220" />
-
-                      <!-- Task 3 -> Task 6 (market analysis -> report) -->
-                      <path d="M 740 265 L 820 265" />
+                    <!-- Agent 2 -->
+                    <g>
+                      <rect class="node" x="430" y="70" width="340" height="150" />
+                      <text class="h1" x="455" y="102">Agent 2 — Requirements Extractor</text>
+                      <text class="h2" x="455" y="130"><tspan class="label">Tool:</tspan> (LLM extraction)</text>
+                      <text class="h2" x="455" y="155"><tspan class="label">Task:</tspan> Extract skills/cloud/certs</text>
+                      <text class="t"  x="455" y="178">Strict schema • explicit mentions • per-post dedup</text>
+                      <text class="h2" x="455" y="205"><tspan class="label">Output:</tspan> Requirements JSON</text>
                     </g>
 
-                    <!-- Legend -->
-                    <g font-family="Plus Jakarta Sans">
-                      <rect x="60" y="350" width="1080" height="150" rx="16" fill="#ffffff" opacity="0.95" stroke="rgba(36,48,65,.14)"/>
-                      <text x="85" y="385" font-size="15" font-weight="800" fill="#243041">Key design choices</text>
-                      <text x="85" y="412" font-size="12.5" fill="#6c757d">• Single-responsibility agents + structured handoffs (JSON/MD) keeps outputs debuggable and reduces prompt drift.</text>
-                      <text x="85" y="434" font-size="12.5" fill="#6c757d">• Per-posting de-duplication and synonym grouping creates more reliable frequency stats.</text>
-                      <text x="85" y="456" font-size="12.5" fill="#6c757d">• Final artifact is an HTML report: easy to share, archive, and compare across dates/locations/titles.</text>
-                      <text x="85" y="478" font-size="12.5" fill="#6c757d">• Tools are isolated: SerpAPI collection, PDF extraction, and report saving are modular and testable.</text>
+                    <!-- Agent 3 -->
+                    <g>
+                      <rect class="node" x="800" y="70" width="340" height="150" />
+                      <text class="h1" x="825" y="102">Agent 3 — Requirements Analyzer</text>
+                      <text class="h2" x="825" y="130"><tspan class="label">Tool:</tspan> (stats + normalization)</text>
+                      <text class="h2" x="825" y="155"><tspan class="label">Task:</tspan> Aggregate &amp; normalize</text>
+                      <text class="t"  x="825" y="178">Synonym grouping • counts + % of postings</text>
+                      <text class="h2" x="825" y="205"><tspan class="label">Output:</tspan> Market summary (MD)</text>
                     </g>
+
+                    <!-- Agent 4 -->
+                    <g>
+                      <rect class="node" x="60" y="275" width="340" height="150" />
+                      <text class="h1" x="85" y="307">Agent 4 — Resume Content Extractor</text>
+                      <text class="h2" x="85" y="335"><tspan class="label">Tool:</tspan> ResumePDFTextTool</text>
+                      <text class="h2" x="85" y="360"><tspan class="label">Task:</tspan> Parse resume &amp; extract profile</text>
+                      <text class="t"  x="85" y="383">Skills/tools • cloud (AWS/Azure/GCP) • certs</text>
+                      <text class="h2" x="85" y="410"><tspan class="label">Output:</tspan> Resume profile JSON</text>
+                    </g>
+
+                    <!-- Agent 5 -->
+                    <g>
+                      <rect class="node" x="430" y="455" width="340" height="150" />
+                      <text class="h1" x="455" y="487">Agent 5 — Resume Booster Specialist</text>
+                      <text class="h2" x="455" y="515"><tspan class="label">Tool:</tspan> (comparison + ranking)</text>
+                      <text class="h2" x="455" y="540"><tspan class="label">Task:</tspan> Gap analysis (market vs resume)</text>
+                      <text class="t"  x="455" y="563">Top 5 skills/tools to learn next + % mention</text>
+                      <text class="h2" x="455" y="590"><tspan class="label">Output:</tspan> Recommendations (MD)</text>
+                    </g>
+
+                    <!-- Agent 6 -->
+                    <g>
+                      <rect class="node" x="800" y="455" width="340" height="150" />
+                      <text class="h1" x="825" y="487">Agent 6 — HTML Report Writer</text>
+                      <text class="h2" x="825" y="515"><tspan class="label">Tool:</tspan> SaveHTMLTool</text>
+                      <text class="h2" x="825" y="540"><tspan class="label">Task:</tspan> Render final report</text>
+                      <text class="t"  x="825" y="563">Tables + narrative → standalone artifact</text>
+                      <text class="h2" x="825" y="590"><tspan class="label">Output:</tspan> Polished report (HTML)</text>
+                    </g>
+
+                    <!-- Arrows (clean, non-crossing) -->
+                    <g>
+                      <!-- A1 -> A2 -->
+                      <path class="edge" d="M 400 145 L 430 145" />
+                      <!-- A2 -> A3 -->
+                      <path class="edge" d="M 770 145 L 800 145" />
+                      <!-- A3 -> A5 (down to merge) -->
+                      <path class="edge" d="M 970 220 L 970 350 L 770 350 L 770 530 L 770 530 L 770 530" />
+                      <!-- We'll draw a simpler orthogonal: A3 right edge down then left then down into A5 -->
+                      <path class="edge" d="M 1140 145 L 1160 145 L 1160 520 L 770 520 L 770 520" />
+                      <!-- A4 -> A5 -->
+                      <path class="edge" d="M 400 350 L 420 350 L 420 520 L 430 520" />
+                      <!-- A3 -> A5 (alternative clean path from A3 bottom) -->
+                      <path class="edge" d="M 970 220 L 970 420 L 600 420 L 600 455" />
+                      <!-- A5 -> A6 -->
+                      <path class="edge" d="M 770 530 L 800 530" />
+                    </g>
+
                   </svg>
+                </div>
+
+                <!-- Short notes (things not on the diagram) -->
+                <div class="mt-4">
+                  <div class="row g-3">
+                    <div class="col-lg-6">
+                      <div class="p-3 rounded-4" style="background:rgba(78,115,223,.06); border:1px solid rgba(78,115,223,.10);">
+                        <div class="fw-bolder mb-1"><i class="bi bi-shield-check me-1"></i>Reliability choices</div>
+                        <div class="small hint mb-0">
+                          Structured schemas + per-post deduplication reduce hallucinations and inflate counts less.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <div class="p-3 rounded-4" style="background:rgba(28,200,138,.08); border:1px solid rgba(28,200,138,.14);">
+                        <div class="fw-bolder mb-1"><i class="bi bi-wallet2 me-1"></i>Cost &amp; runtime</div>
+                        <div class="small hint mb-0">
+                          Real job postings + multi-step extraction makes the run slower; this page shows a pre-generated HTML report.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
               </div>
             </div>
 
-            <!-- Deep dive -->
-            <div class="section-card mb-4">
-              <div class="section-hd">
-                <h2 class="h4 fw-bolder mb-1">How it works (deeper explanation)</h2>
-                <p class="mb-0 hint">From raw postings to a focused learning plan—in six deterministic steps.</p>
-              </div>
-              <div class="section-bd">
-                <ol class="mb-0">
-                  <li class="mb-2">
-                    <b>Collect postings</b> for target titles/country via SerpAPI Google Jobs (structured title/company/location/description).
-                  </li>
-                  <li class="mb-2">
-                    <b>Extract requirements</b> from each description into a strict schema: <span class="mono">technical_skills</span>, <span class="mono">cloud_platforms</span>, <span class="mono">certifications</span>.
-                  </li>
-                  <li class="mb-2">
-                    <b>Aggregate & normalize</b> across roles: synonym grouping, per-post deduplication, and frequency stats (% of postings).
-                  </li>
-                  <li class="mb-2">
-                    <b>Parse resume</b> (PDF → text) and extract existing skills/certs/cloud to build an “as‑is” profile.
-                  </li>
-                  <li class="mb-2">
-                    <b>Gap analysis</b>: compare “market needs” vs. “resume skills” and rank the next 5 highest‑impact learning targets.
-                  </li>
-                  <li>
-                    <b>Generate an HTML report</b>: charts/tables + a readable narrative, saved as a standalone artifact.
-                  </li>
-                </ol>
-              </div>
-            </div>
 
             <!-- Report display -->
             <div class="section-card mb-5">
@@ -428,10 +441,8 @@
                   <a class="btn btn-primary btn-solid" href="job_market_report.html">
                     Open full report <i class="bi bi-box-arrow-up-right ms-1"></i>
                   </a>
-                  <button class="btn btn-outline-primary btn-ghost" type="button" data-bs-toggle="collapse" data-bs-target="#inlineReport" aria-expanded="true" aria-controls="inlineReport">
-                    Hide inline preview <i class="bi bi-chevron-up ms-1"></i>
-                  </button>
-                                  </div>
+
+                </div>
 
                 <div class="collapse show" id="inlineReport">
                   <div class="ratio ratio-16x9">
