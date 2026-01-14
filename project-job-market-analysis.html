@@ -280,7 +280,8 @@
               </div>
               <div class="section-bd">
                 <div class="diagram-wrap">
-                  <svg viewBox="0 0 1200 620" role="img" aria-label="CrewAI architecture diagram (agent, tool, task, output)">
+                  
+                  <svg viewBox="0 0 1200 1150" role="img" aria-label="CrewAI architecture diagram (agent, tool, task, output)">
                     <defs>
                       <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
                         <stop offset="0" stop-color="#4e73df" stop-opacity="0.22"/>
@@ -292,127 +293,182 @@
                       <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="10" markerHeight="10" orient="auto">
                         <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563"/>
                       </marker>
+
                       <style>
                         .pane{fill:url(#g1);stroke:rgba(36,48,65,.18);stroke-width:1.2;}
                         .node{fill:#fff;stroke:rgba(36,48,65,.14);stroke-width:2;rx:18;filter:url(#shadow);}
-                        .h1{font:800 16px 'Plus Jakarta Sans', sans-serif; fill:#243041;}
-                        .h2{font:700 12.5px 'Plus Jakarta Sans', sans-serif; fill:#415065;}
-                        .t{font:600 12.5px 'Plus Jakarta Sans', sans-serif; fill:#6c757d;}
+                        /* +30% font sizes */
+                        .h1{font:800 21px 'Plus Jakarta Sans', sans-serif; fill:#243041;}
+                        .h2{font:700 16px 'Plus Jakarta Sans', sans-serif; fill:#415065;}
+                        .t{font:600 15px 'Plus Jakarta Sans', sans-serif; fill:#6c757d;}
                         .edge{stroke:#4b5563;stroke-width:2.2;fill:none;marker-end:url(#arrow);}
-                        .pill{font:800 12px 'Plus Jakarta Sans', sans-serif; fill:#415065;}
+                        .pill{font:800 15px 'Plus Jakarta Sans', sans-serif; fill:#415065;}
                         .pillbox{fill:rgba(255,255,255,.85);stroke:rgba(36,48,65,.12);stroke-width:1;}
-                        .label{font:800 12px 'Plus Jakarta Sans', sans-serif; fill:#243041;}
-                        .k{font:800 12px 'Plus Jakarta Sans', sans-serif; fill:#4e73df;}
+                        .label{font:800 16px 'Plus Jakarta Sans', sans-serif; fill:#243041;}
+                        .k{font:800 16px 'Plus Jakarta Sans', sans-serif; fill:#4e73df;}
                       </style>
+
                     </defs>
 
                     <!-- Background -->
-                    <rect class="pane" x="18" y="18" width="1164" height="584" rx="18" />
+                    <rect class="pane" x="18" y="18" width="1164" height="1114" rx="18" />
 
-                    <!-- Layout:
-                         Row 1: A1 -> A2 -> A3
-                         Row 2: A4 ---------> (merge into A5)
-                         Row 3: A5 -> A6
-                    -->
-
-					<!-- Agent 1 -->
+<!-- Agent 1 -->
 					<g>
-					  <rect class="node" x="60" y="70" width="340" height="170" />
+					  <rect class="node" x="80" y="60" width="420" height="210" />
 
-					  <text class="h1" x="85" y="102">
+					  <text class="h1" x="105" y="92">
 						Agent 1: Job Postings Finder
 					  </text>
 
 					  <!-- Task -->
-					  <text class="h2" x="85" y="138">
+					  <text class="h2" x="105" y="128">
 						<tspan class="label">Task:</tspan>
-						<tspan x="85" dy="18">
+						<tspan x="105" dy="18">
 						  Retrieve job postings matching the requested
 						</tspan>
-						<tspan x="85" dy="18">
+						<tspan x="105" dy="18">
 						  titles and target country from Google Jobs
 						</tspan>
-						<tspan x="85" dy="18">
+						<tspan x="105" dy="18">
 						  using SerpAPI.
 						</tspan>
 					  </text>
 
 					  <!-- Output (reduced spacing) -->
-					  <text class="h2" x="85" y="220">
+					  <text class="h2" x="105" y="210">
 						<tspan class="label">Output:</tspan>
 						<tspan> Job Postings JSON</tspan>
 					  </text>
 					</g>
-
-                    <!-- Agent 2 -->
+<!-- Agent 2 -->
                     <g>
-                      <rect class="node" x="430" y="70" width="340" height="150" />
-                      <text class="h1" x="455" y="102">Agent 2 — Requirements Extractor</text>
-                      <text class="h2" x="455" y="130"><tspan class="label">Tool:</tspan> (LLM extraction)</text>
-                      <text class="h2" x="455" y="155"><tspan class="label">Task:</tspan> Extract skills/cloud/certs</text>
-                      <text class="t"  x="455" y="178">Strict schema • explicit mentions • per-post dedup</text>
-                      <text class="h2" x="455" y="205"><tspan class="label">Output:</tspan> Requirements JSON</text>
+                      <rect class="node" x="580" y="60" width="420" height="210" />
+                      <text class="h1" x="605" y="92">Agent 2: Requirements Extractor</text>
+
+                      <!-- Task -->
+                      <text class="h2" x="605" y="128">
+                        <tspan class="label">Task:</tspan>
+                        <tspan x="605" dy="18">
+                          Extract skills/tools, cloud platforms, and
+                        </tspan>
+                        <tspan x="605" dy="18">
+                          certifications from each job description.
+                        </tspan>
+                      </text>
+
+                      <!-- Output -->
+                      <text class="h2" x="605" y="210">
+                        <tspan class="label">Output:</tspan>
+                        <tspan> Requirements JSON</tspan>
+                      </text>
+                    </g>
+<!-- Agent 3 -->
+                    <g>
+                      <rect class="node" x="580" y="330" width="420" height="210" />
+                      <text class="h1" x="605" y="362">Agent 3: Requirements Analyzer</text>
+
+                      <!-- Task -->
+                      <text class="h2" x="605" y="398">
+                        <tspan class="label">Task:</tspan>
+                        <tspan x="605" dy="18">
+                          Aggregate & normalize extracted requirements
+                        </tspan>
+                        <tspan x="605" dy="18">
+                          (synonyms, counts, % of postings).
+                        </tspan>
+                      </text>
+
+                      <!-- Output -->
+                      <text class="h2" x="605" y="480">
+                        <tspan class="label">Output:</tspan>
+                        <tspan> Market summary (Mark Down)</tspan>
+                      </text>
+                    </g>
+<!-- Agent 4 -->
+                    <g>
+                      <rect class="node" x="80" y="600" width="420" height="210" />
+                      <text class="h1" x="105" y="632">Agent 4: Resume Content Extractor</text>
+
+                      <!-- Task -->
+                      <text class="h2" x="105" y="668">
+                        <tspan class="label">Task:</tspan>
+                        <tspan x="105" dy="18">
+                          Parse Resume.pdf and extract the user's
+                        </tspan>
+                        <tspan x="105" dy="18">
+                          skills/tools and certifications.
+                        </tspan>
+                      </text>
+
+                      <!-- Output -->
+                      <text class="h2" x="105" y="750">
+                        <tspan class="label">Output:</tspan>
+                        <tspan> USers Skills JSON</tspan>
+                      </text>
+                    </g>
+<!-- Agent 5 -->
+                    <g>
+                      <rect class="node" x="580" y="600" width="420" height="210" />
+                      <text class="h1" x="605" y="632">Agent 5: Resume Booster Specialist</text>
+
+                      <!-- Task -->
+                      <text class="h2" x="605" y="660">
+                        <tspan class="label">Task:</tspan>
+                        <tspan x="605" dy="18">
+                          Compare market requirements vs resume profile
+                        </tspan>
+                        <tspan x="605" dy="18">
+                          and rank the top skills to learn next.
+                        </tspan>
+                      </text>
+
+                      <!-- Output -->
+                      <text class="h2" x="605" y="750">
+                        <tspan class="label">Output:</tspan>
+                        <tspan> Recommendations (Mark Down)</tspan>
+                      </text>
+                    </g>
+<!-- Agent 6 -->
+                    <g>
+                      <rect class="node" x="580" y="870" width="420" height="210" />
+                      <text class="h1" x="605" y="902">Agent 6: HTML Report Writer</text>
+
+                      <!-- Task -->
+                      <text class="h2" x="605" y="938">
+                        <tspan class="label">Task:</tspan>
+                        <tspan x="605" dy="18">
+                          Generate the final HTML report with tables
+                        </tspan>
+                        <tspan x="605" dy="18">
+                          and a readable narrative summary.
+                        </tspan>
+                      </text>
+
+                      <!-- Output -->
+                      <text class="h2" x="605" y="1020">
+                        <tspan class="label">Output:</tspan>
+                        <tspan> Polished Report (HTML)</tspan>
+                      </text>
                     </g>
 
-                    <!-- Agent 3 -->
-                    <g>
-                      <rect class="node" x="800" y="70" width="340" height="150" />
-                      <text class="h1" x="825" y="102">Agent 3 — Requirements Analyzer</text>
-                      <text class="h2" x="825" y="130"><tspan class="label">Tool:</tspan> (stats + normalization)</text>
-                      <text class="h2" x="825" y="155"><tspan class="label">Task:</tspan> Aggregate &amp; normalize</text>
-                      <text class="t"  x="825" y="178">Synonym grouping • counts + % of postings</text>
-                      <text class="h2" x="825" y="205"><tspan class="label">Output:</tspan> Market summary (MD)</text>
-                    </g>
-
-                    <!-- Agent 4 -->
-                    <g>
-                      <rect class="node" x="60" y="275" width="340" height="150" />
-                      <text class="h1" x="85" y="307">Agent 4 — Resume Content Extractor</text>
-                      <text class="h2" x="85" y="335"><tspan class="label">Tool:</tspan> ResumePDFTextTool</text>
-                      <text class="h2" x="85" y="360"><tspan class="label">Task:</tspan> Parse resume &amp; extract profile</text>
-                      <text class="t"  x="85" y="383">Skills/tools • cloud (AWS/Azure/GCP) • certs</text>
-                      <text class="h2" x="85" y="410"><tspan class="label">Output:</tspan> Resume profile JSON</text>
-                    </g>
-
-                    <!-- Agent 5 -->
-                    <g>
-                      <rect class="node" x="430" y="455" width="340" height="150" />
-                      <text class="h1" x="455" y="487">Agent 5 — Resume Booster Specialist</text>
-                      <text class="h2" x="455" y="515"><tspan class="label">Tool:</tspan> (comparison + ranking)</text>
-                      <text class="h2" x="455" y="540"><tspan class="label">Task:</tspan> Gap analysis (market vs resume)</text>
-                      <text class="t"  x="455" y="563">Top 5 skills/tools to learn next + % mention</text>
-                      <text class="h2" x="455" y="590"><tspan class="label">Output:</tspan> Recommendations (MD)</text>
-                    </g>
-
-                    <!-- Agent 6 -->
-                    <g>
-                      <rect class="node" x="800" y="455" width="340" height="150" />
-                      <text class="h1" x="825" y="487">Agent 6 — HTML Report Writer</text>
-                      <text class="h2" x="825" y="515"><tspan class="label">Tool:</tspan> SaveHTMLTool</text>
-                      <text class="h2" x="825" y="540"><tspan class="label">Task:</tspan> Render final report</text>
-                      <text class="t"  x="825" y="563">Tables + narrative → standalone artifact</text>
-                      <text class="h2" x="825" y="590"><tspan class="label">Output:</tspan> Polished report (HTML)</text>
-                    </g>
-
-                    <!-- Arrows (clean, non-crossing) -->
+                    
+                    <!-- Arrows (clean, spaced, non-overlapping) -->
                     <g>
                       <!-- A1 -> A2 -->
-                      <path class="edge" d="M 400 145 L 430 145" />
+                      <path class="edge" d="M 500 165 L 520 165" />
                       <!-- A2 -> A3 -->
-                      <path class="edge" d="M 770 145 L 800 145" />
-                      <!-- A3 -> A5 (down to merge) -->
-                      <path class="edge" d="M 970 220 L 970 350 L 770 350 L 770 530 L 770 530 L 770 530" />
-                      <!-- We'll draw a simpler orthogonal: A3 right edge down then left then down into A5 -->
-                      <path class="edge" d="M 1140 145 L 1160 145 L 1160 520 L 770 520 L 770 520" />
+                      <path class="edge" d="M 730 270 L 730 310" />
+                      <!-- A3 -> A5 -->
+                      <path class="edge" d="M 730 520 L 730 560" />
                       <!-- A4 -> A5 -->
-                      <path class="edge" d="M 400 350 L 420 350 L 420 520 L 430 520" />
-                      <!-- A3 -> A5 (alternative clean path from A3 bottom) -->
-                      <path class="edge" d="M 970 220 L 970 420 L 600 420 L 600 455" />
+                      <path class="edge" d="M 500 465 L 520 465 L 520 605" />
                       <!-- A5 -> A6 -->
-                      <path class="edge" d="M 770 530 L 800 530" />
+                      <path class="edge" d="M 730 760 L 730 780" />
                     </g>
-
+    
                   </svg>
+
                 </div>
 
                 <!-- Short notes (things not on the diagram) -->
