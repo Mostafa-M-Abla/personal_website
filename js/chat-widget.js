@@ -1,8 +1,6 @@
-<script>
 (function () {
-  const API_URL = "https://yourname-chat-api.fly.dev/chat"; // change later to https://api.yourdomain.com/chat
+  const API_URL = "https://YOUR_APP.fly.dev/chat";
 
-  // Basic UI
   const box = document.createElement("div");
   box.style.position = "fixed";
   box.style.right = "20px";
@@ -14,7 +12,7 @@
   box.style.boxShadow = "0 6px 24px rgba(0,0,0,0.15)";
   box.style.fontFamily = "system-ui, Arial";
   box.style.overflow = "hidden";
-  box.style.zIndex = "9999";
+  box.style.zIndex = "999999";
 
   box.innerHTML = `
     <div style="padding:10px 12px; font-weight:600; border-bottom:1px solid #eee;">
@@ -56,15 +54,10 @@
         body: JSON.stringify({ message: msg })
       });
 
-      if (!res.ok) {
-        const t = await res.text();
-        throw new Error(`HTTP ${res.status}: ${t}`);
-      }
-
       const data = await res.json();
       addLine("Bot", data.reply ?? "(no reply)");
     } catch (e) {
-      addLine("Bot", "Error: " + (e && e.message ? e.message : String(e)));
+      addLine("Bot", "Error: " + (e?.message ?? String(e)));
     } finally {
       btn.disabled = false;
       input.focus();
@@ -76,4 +69,3 @@
     if (e.key === "Enter") send();
   });
 })();
-</script>
