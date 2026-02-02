@@ -1,0 +1,212 @@
+(function () {
+  const API_URL = ""https://chatbot-personal-website.fly.dev/chat""; // <- change this
+  const ASSISTANT_NAME = "Assistant";
+  const ASSISTANT_STATUS = "Ask me about my work 👋";
+  const AVATAR_URL = "https://mostafaabla.com/assets/assistant.png"; 
+  // ^ Replace with your own. If you don’t have one, leave it empty "".
+
+  // ---------- Helpers ----------
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, (c) => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+    }[c]));
+  }
+
+  function el(tag, cls) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    return e;
+  }
+
+  function scrollToBottom(container) {
+    container.scrollTop = container.scrollHeight;
+  }
+
+  // ---------- Inject CSS if not included ----------
+  // (Optional safety: if you forget to include chat-widget.css, it still works.)
+  if (!document.querySelector('link[data-chat-widget-css="1"]')) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "/chat-widget.css";
+    link.setAttribute("data-chat-widget-css", "1");
+    document.head.appendChild(link);
+  }
+
+  // ---------- Launcher ----------
+  const launcher = el("button", "cw-launcher");
+  launcher.setAttribute("aria-label", "Open chat");
+  launcher.innerHTML = `
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3c-5 0-9 3.6-9 8 0 2.3 1.1 4.4 3 5.9V21l3.3-1.8c.9.2 1.8.3 2.7.3 5 0 9-3.6 9-8s-4-8-9-8zm-4 9h8v2H8v-2zm0-4h8v2H8V8z"></path>
+    </svg>
+  `;
+  document.body.appendChild(launcher);
+
+  // ---------- Panel ----------
+  let panel = null;
+  let isOpen = false;
+  let isWaiting = false;
+
+  function buildPanel() {
+    panel = el("div", "cw-panel");
+
+    const header = el("div", "cw-header");
+
+    const avatar = el("div", "cw-avatar");
+    avatar.innerHTML = AVATAR_URL
+      ? `<img alt="${escapeHtml(ASSISTANT_NAME)}" src="${escapeHtml(AVATAR_URL)}" />`
+      : "";
+
+    const title = el("div", "cw-title");
+    title.innerHTML = `<strong>${escapeHtml(ASSISTANT_NAME)}</strong><span>${escapeHtml(ASSISTANT_STATUS)}</span>`;
+
+    const actions = el("div", "cw-header-actions");
+
+    const btnMin = el("button", "cw-iconbtn");
+    btnMin.setAttribute("aria-label", "Minimize");
+    btnMin.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 11h12v2H6z"></path>
+      </svg>
+    `;
+
+    const btnClose = el("button", "cw-iconbtn");
+    btnClose.setAttribute("aria-label", "Close");
+    btnClose.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"></path>
+      </svg>
+    `;
+
+    actions.appendChild(btnMin);
+    actions.appendChild(btnClose);
+
+    header.appendChild(avatar);
+    header.appendChild(title);
+    header.appendChild(actions);
+
+    const body = el("div", "cw-body");
+
+    const footer = el("div", "cw-footer");
+    const input = el("input", "cw-input");
+    input.placeholder = "Type a message…";
+    input.autocomplete = "off";
+
+    const send = el("button", "cw-send");
+    send.textContent = "Send";
+
+    footer.appendChild(input);
+    footer.appendChild(send);
+
+    panel.appendChild(header);
+    panel.appendChild(body);
+    panel.appendChild(footer);
+
+    // Welcome message
+    addMsg(body, "bot", "Hi! Try sending a number like 7 🙂");
+
+    // Handlers
+    function setWaiting(waiting) {
+      isWaiting = waiting;
+      send.disabled = waiting;
+      input.disabled = waiting;
+      if (!waiting) input.focus();
+    }
+
+    async function doSend() {
+      const msg = input.value.trim();
+      if (!msg || isWaiting) return;
+
+      addMsg(body, "user", msg);
+      input.value = "";
+
+      // Show typing indicator
+      const typingEl = addTyping(body);
+
+      setWaiting(true);
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg }),
+        });
+
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(`HTTP ${res.status}: ${txt}`);
+        }
+
+        const data = await res.json();
+        typingEl.remove();
+        addMsg(body, "bot", data.reply ?? "(no reply)");
+      } catch (e) {
+        typingEl.remove();
+        addMsg(body, "bot", "Sorry — I couldn't reach the server.");
+      } finally {
+        setWaiting(false);
+        scrollToBottom(body);
+      }
+    }
+
+    send.addEventListener("click", doSend);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") doSend();
+    });
+
+    btnMin.addEventListener("click", closePanel);
+    btnClose.addEventListener("click", closePanel);
+
+    // Small UX: open focuses input
+    setTimeout(() => input.focus(), 50);
+
+    return panel;
+  }
+
+  function addMsg(container, who, text) {
+    const row = el("div", `cw-msg ${who === "user" ? "cw-user" : ""}`);
+
+    const bubble = el("div", "cw-bubble");
+    bubble.innerHTML = escapeHtml(text);
+
+    row.appendChild(bubble);
+    container.appendChild(row);
+    scrollToBottom(container);
+    return row;
+  }
+
+  function addTyping(container) {
+    const row = el("div", "cw-msg");
+    const bubble = el("div", "cw-bubble");
+
+    bubble.innerHTML = `
+      <span class="cw-typing" aria-label="Assistant typing">
+        <span class="cw-dot"></span>
+        <span class="cw-dot"></span>
+        <span class="cw-dot"></span>
+      </span>
+    `;
+
+    row.appendChild(bubble);
+    container.appendChild(row);
+    scrollToBottom(container);
+    return row;
+  }
+
+  function openPanel() {
+    if (isOpen) return;
+    isOpen = true;
+    if (!panel) panel = buildPanel();
+    document.body.appendChild(panel);
+  }
+
+  function closePanel() {
+    isOpen = false;
+    if (panel && panel.parentNode) panel.parentNode.removeChild(panel);
+  }
+
+  launcher.addEventListener("click", () => {
+    if (isOpen) closePanel();
+    else openPanel();
+  });
+
+})();
