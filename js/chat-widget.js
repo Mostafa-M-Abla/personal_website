@@ -1,5 +1,5 @@
 (function () {
-  const API_URL = "https://YOUR_APP.fly.dev/chat";
+  const API_URL = "https://chatbot-personal-website.fly.dev/chat";
 
   const box = document.createElement("div");
   box.style.position = "fixed";
