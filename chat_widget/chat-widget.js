@@ -41,6 +41,46 @@
     </svg>
   `;
   document.body.appendChild(launcher);
+  
+  // --- Nudge: show hint + pulse once until user opens chat ---
+	const NUDGE_KEY = "cw_nudge_dismissed_v1";
+	const OPENED_KEY = "cw_opened_once_v1";
+
+	function showNudge() {
+	  // If user already opened chat or dismissed hint, do nothing
+	  if (localStorage.getItem(OPENED_KEY) === "1") return;
+	  if (localStorage.getItem(NUDGE_KEY) === "1") return;
+
+	  // Pulse for a few seconds
+	  launcher.classList.add("cw-pulse");
+	  setTimeout(() => launcher.classList.remove("cw-pulse"), 8000);
+
+	  // Hint bubble
+	  const hint = document.createElement("div");
+	  hint.className = "cw-hint";
+	  hint.innerHTML = `
+		<div>
+		  <strong>Need help?</strong>
+		  <p>Ask about my projects, skills, or how I can help your team.</p>
+		</div>
+		<button class="cw-hint-close" aria-label="Dismiss">×</button>
+	  `;
+	  document.body.appendChild(hint);
+
+	  const closeBtn = hint.querySelector(".cw-hint-close");
+	  closeBtn.addEventListener("click", () => {
+		localStorage.setItem(NUDGE_KEY, "1");
+		hint.remove();
+	  });
+
+	  // Auto-hide after 12s (but don’t mark dismissed)
+	  setTimeout(() => {
+		if (hint.isConnected) hint.remove();
+	  }, 12000);
+	}
+
+	// Show nudge shortly after load
+	setTimeout(showNudge, 1200);
 
   // ---------- Panel ----------
   let panel = null;
@@ -192,12 +232,21 @@
     return row;
   }
 
-  function openPanel() {
-    if (isOpen) return;
-    isOpen = true;
-    if (!panel) panel = buildPanel();
-    document.body.appendChild(panel);
-  }
+	function openPanel() {
+	  if (isOpen) return;
+	  isOpen = true;
+
+	  // mark as opened so nudge won’t come back
+	  try { localStorage.setItem(OPENED_KEY, "1"); } catch (_) {}
+
+	  // remove hint if present
+	  const hint = document.querySelector(".cw-hint");
+	  if (hint) hint.remove();
+	  launcher.classList.remove("cw-pulse");
+
+	  if (!panel) panel = buildPanel();
+	  document.body.appendChild(panel);
+	}
 
   function closePanel() {
     isOpen = false;
