@@ -27,7 +27,7 @@
   if (!document.querySelector('link[data-chat-widget-css="1"]')) {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "/chat-widget.css";
+    link.href = "/chat_widget/chat-widget.css";
     link.setAttribute("data-chat-widget-css", "1");
     document.head.appendChild(link);
   }
