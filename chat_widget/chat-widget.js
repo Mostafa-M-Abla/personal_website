@@ -43,19 +43,15 @@
   document.body.appendChild(launcher);
   
   // --- Nudge: show hint + pulse once until user opens chat ---
-	const NUDGE_KEY = "cw_nudge_dismissed_v1";
-	const OPENED_KEY = "cw_opened_once_v1";
+	const NUDGE_SESSION_KEY = "cw_nudge_dismissed_session_v1";
+
 
 	function showNudge() {
-	  // If user already opened chat or dismissed hint, do nothing
-	  if (localStorage.getItem(OPENED_KEY) === "1") return;
-	  if (localStorage.getItem(NUDGE_KEY) === "1") return;
+	  if (sessionStorage.getItem(NUDGE_SESSION_KEY) === "1") return;
 
-	  // Pulse for a few seconds
 	  launcher.classList.add("cw-pulse");
 	  setTimeout(() => launcher.classList.remove("cw-pulse"), 8000);
 
-	  // Hint bubble
 	  const hint = document.createElement("div");
 	  hint.className = "cw-hint";
 	  hint.innerHTML = `
@@ -67,17 +63,18 @@
 	  `;
 	  document.body.appendChild(hint);
 
-	  const closeBtn = hint.querySelector(".cw-hint-close");
-	  closeBtn.addEventListener("click", () => {
-		localStorage.setItem(NUDGE_KEY, "1");
+	  // If user closes hint → mark dismissed for this session
+	  hint.querySelector(".cw-hint-close").addEventListener("click", () => {
+		sessionStorage.setItem(NUDGE_SESSION_KEY, "1");
 		hint.remove();
 	  });
 
-	  // Auto-hide after 12s (but don’t mark dismissed)
+	  // Auto-hide after 12s (but still allow it to show again if not dismissed)
 	  setTimeout(() => {
 		if (hint.isConnected) hint.remove();
 	  }, 12000);
 	}
+
 
 	// Show nudge shortly after load
 	setTimeout(showNudge, 1200);
@@ -236,10 +233,10 @@
 	  if (isOpen) return;
 	  isOpen = true;
 
-	  // mark as opened so nudge won’t come back
-	  try { localStorage.setItem(OPENED_KEY, "1"); } catch (_) {}
+	  // mark nudge as dismissed for this session
+	  sessionStorage.setItem(NUDGE_SESSION_KEY, "1");
 
-	  // remove hint if present
+	  // remove hint if visible
 	  const hint = document.querySelector(".cw-hint");
 	  if (hint) hint.remove();
 	  launcher.classList.remove("cw-pulse");
