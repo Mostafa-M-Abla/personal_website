@@ -1,5 +1,5 @@
 (function () {
-  const API_URL = ""https://chatbot-personal-website.fly.dev/chat""; // <- change this
+  const API_URL = "https://chatbot-personal-website.fly.dev/chat"; // <- change this
   const ASSISTANT_NAME = "Assistant";
   const ASSISTANT_STATUS = "Ask me about my work 👋";
   const AVATAR_URL = "https://mostafaabla.com/assets/assistant.png"; 
