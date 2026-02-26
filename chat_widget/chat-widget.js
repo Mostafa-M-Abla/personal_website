@@ -56,8 +56,8 @@
 	  hint.className = "cw-hint";
 	  hint.innerHTML = `
 		<div>
-		  <strong>Need help?</strong>
-		  <p>Ask about my projects, skills, or how I can help your team.</p>
+		  <strong>questions about Mostafa?</strong>
+		  <p>Ask me about his education, experience, projects, skills, or how he can help your team.</p>
 		</div>
 		<button class="cw-hint-close" aria-label="Dismiss">×</button>
 	  `;
