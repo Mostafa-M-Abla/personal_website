@@ -56,7 +56,7 @@
 	  hint.className = "cw-hint";
 	  hint.innerHTML = `
 		<div>
-		  <strong>questions about Mostafa?</strong>
+		  <strong>Questions about Mostafa?</strong>
 		  <p>Ask me about his education, experience, projects, skills, or how he can help your team.</p>
 		</div>
 		<button class="cw-hint-close" aria-label="Dismiss">×</button>
@@ -127,7 +127,7 @@
 
     const footer = el("div", "cw-footer");
     const input = el("input", "cw-input");
-    input.placeholder = "Type a message…";
+    input.placeholder = "Type a question…";
     input.autocomplete = "off";
 
     const send = el("button", "cw-send");
