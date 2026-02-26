@@ -83,6 +83,7 @@
   let panel = null;
   let isOpen = false;
   let isWaiting = false;
+  let sessionId = null;
 
   function buildPanel() {
     panel = el("div", "cw-panel");
@@ -140,7 +141,7 @@
     panel.appendChild(footer);
 
     // Welcome message
-    addMsg(body, "bot", "Hi! Try sending a random number 🙂");
+    addMsg(body, "bot", "Hi! Ask me anything about Mostafa's work 🙂");
 
     // Handlers
     function setWaiting(waiting) {
@@ -165,7 +166,7 @@
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message: msg }),
+          body: JSON.stringify({ message: msg, session_id: sessionId }),
         });
 
         if (!res.ok) {
@@ -174,6 +175,7 @@
         }
 
         const data = await res.json();
+        if (data.session_id) sessionId = data.session_id;
         typingEl.remove();
         addMsg(body, "bot", data.reply ?? "(no reply)");
       } catch (e) {
