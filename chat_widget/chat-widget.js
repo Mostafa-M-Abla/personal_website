@@ -140,7 +140,7 @@
     panel.appendChild(footer);
 
     // Welcome message
-    addMsg(body, "bot", "Hi! Try sending a number like 7 🙂");
+    addMsg(body, "bot", "Hi! Try sending a random number 🙂");
 
     // Handlers
     function setWaiting(waiting) {
