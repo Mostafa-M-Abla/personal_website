@@ -1,5 +1,5 @@
 (function () {
-  const API_URL = "https://chatbot-personal-website.fly.dev/chat"; // <- change this
+  const API_URL = "https://chatbot-personal-website.fly.dev/chat/stream";
   const ASSISTANT_NAME = "Assistant";
   const ASSISTANT_STATUS = "Ask me about my work 👋";
   const AVATAR_URL = "https://mostafaabla.com/assets/assistant.png"; 
@@ -174,12 +174,45 @@
           throw new Error(`HTTP ${res.status}: ${txt}`);
         }
 
-        const data = await res.json();
-        if (data.session_id) sessionId = data.session_id;
+        // Remove typing indicator and create an empty bot bubble
         typingEl.remove();
-        addMsg(body, "bot", data.reply ?? "(no reply)");
+        const botRow = addMsg(body, "bot", "");
+        const bubble = botRow.querySelector(".cw-bubble");
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let fullText = "";
+        let buffer = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          // Keep the last (possibly incomplete) line in the buffer
+          buffer = lines.pop();
+
+          for (const line of lines) {
+            if (!line.startsWith("data: ")) continue;
+            let parsed;
+            try { parsed = JSON.parse(line.slice(6)); } catch { continue; }
+
+            if (parsed.token) {
+              fullText += parsed.token;
+              bubble.innerHTML = escapeHtml(fullText);
+              scrollToBottom(body);
+            } else if (parsed.done && parsed.session_id) {
+              sessionId = parsed.session_id;
+            } else if (parsed.error) {
+              bubble.innerHTML = escapeHtml("Error: " + parsed.error);
+            }
+          }
+        }
+
+        if (!fullText) bubble.innerHTML = escapeHtml("(no reply)");
       } catch (e) {
-        typingEl.remove();
+        if (typingEl.parentNode) typingEl.remove();
         addMsg(body, "bot", "Sorry — I couldn't reach the server.");
       } finally {
         setWaiting(false);
