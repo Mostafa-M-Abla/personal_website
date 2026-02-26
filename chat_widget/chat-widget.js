@@ -42,6 +42,10 @@
   `;
   document.body.appendChild(launcher);
   
+  // --- Session persistence keys ---
+  const SESSION_ID_KEY = "cw_session_id_v1";
+  const HISTORY_KEY    = "cw_history_v1";
+
   // --- Nudge: show hint + pulse once until user opens chat ---
 	const NUDGE_SESSION_KEY = "cw_nudge_dismissed_session_v1";
 
@@ -83,7 +87,7 @@
   let panel = null;
   let isOpen = false;
   let isWaiting = false;
-  let sessionId = null;
+  let sessionId = sessionStorage.getItem(SESSION_ID_KEY) || null;
 
   function buildPanel() {
     panel = el("div", "cw-panel");
@@ -140,8 +144,18 @@
     panel.appendChild(body);
     panel.appendChild(footer);
 
-    // Welcome message
-    addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills, ... 🙂");
+    // Restore or start conversation
+    const storedHistory = [];
+    try {
+      const raw = sessionStorage.getItem(HISTORY_KEY);
+      if (raw) storedHistory.push(...JSON.parse(raw));
+    } catch {}
+
+    if (storedHistory.length === 0) {
+      addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills, ... 🙂");
+    } else {
+      storedHistory.forEach(({ who, text }) => addMsg(body, who, text));
+    }
 
     // Handlers
     function setWaiting(waiting) {
@@ -158,6 +172,7 @@
       if (sugg) sugg.remove();
 
       addMsg(body, "user", msg);
+      saveToHistory("user", msg);
       input.value = "";
 
       // Show typing indicator
@@ -206,6 +221,7 @@
               scrollToBottom(body);
             } else if (parsed.done && parsed.session_id) {
               sessionId = parsed.session_id;
+              sessionStorage.setItem(SESSION_ID_KEY, sessionId);
             } else if (parsed.error) {
               bubble.innerHTML = escapeHtml("Error: " + parsed.error);
             }
@@ -213,6 +229,7 @@
         }
 
         if (!fullText) bubble.innerHTML = escapeHtml("(no reply)");
+        else saveToHistory("bot", fullText);
       } catch (e) {
         if (typingEl.parentNode) typingEl.remove();
         addMsg(body, "bot", "Sorry — I couldn't reach the server.");
@@ -222,21 +239,23 @@
       }
     }
 
-    // Suggestion chips — removed after first use
-    const suggestions = el("div", "cw-suggestions");
-    ["Where did Mostafa work most recently?",
-     "Which Languages does Mostafa speak?",
-     "Does Mostafa have Leadership experience?"].forEach(q => {
-      const btn = el("button", "cw-suggestion-btn");
-      btn.textContent = q;
-      btn.addEventListener("click", () => {
-        suggestions.remove();
-        input.value = q;
-        doSend();
+    // Suggestion chips — only for fresh conversations, removed after first use
+    if (storedHistory.length === 0) {
+      const suggestions = el("div", "cw-suggestions");
+      ["Where did Mostafa work most recently?",
+       "Which Languages does Mostafa speak?",
+       "Does Mostafa have Leadership experience?"].forEach(q => {
+        const btn = el("button", "cw-suggestion-btn");
+        btn.textContent = q;
+        btn.addEventListener("click", () => {
+          suggestions.remove();
+          input.value = q;
+          doSend();
+        });
+        suggestions.appendChild(btn);
       });
-      suggestions.appendChild(btn);
-    });
-    body.appendChild(suggestions);
+      body.appendChild(suggestions);
+    }
 
     send.addEventListener("click", doSend);
     input.addEventListener("keydown", (e) => {
@@ -250,6 +269,13 @@
     setTimeout(() => input.focus(), 50);
 
     return panel;
+  }
+
+  function saveToHistory(who, text) {
+    let history = [];
+    try { history = JSON.parse(sessionStorage.getItem(HISTORY_KEY) || "[]"); } catch {}
+    history.push({ who, text });
+    sessionStorage.setItem(HISTORY_KEY, JSON.stringify(history));
   }
 
   function addMsg(container, who, text) {
