@@ -50,9 +50,9 @@
   position: fixed;
   right: 22px;
   bottom: 90px;
-  width: 360px;
+  width: 396px;
   max-width: calc(100vw - 44px);
-  height: 520px;
+  height: 572px;
   max-height: calc(100vh - 140px);
   background: var(--cw-bg);
   border: 1px solid var(--cw-border);
