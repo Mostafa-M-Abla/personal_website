@@ -1,7 +1,7 @@
 (function () {
   const API_URL = "https://chatbot-personal-website.fly.dev/chat/stream";
   const ASSISTANT_NAME = "Assistant";
-  const ASSISTANT_STATUS = "Ask me about Mostafa Abla 👋";
+  const ASSISTANT_STATUS = "";
   const AVATAR_URL = "https://mostafaabla.com/assets/assistant.png"; 
   // ^ Replace with your own. If you don’t have one, leave it empty "".
 
@@ -154,6 +154,8 @@
     async function doSend() {
       const msg = input.value.trim();
       if (!msg || isWaiting) return;
+      const sugg = body.querySelector(".cw-suggestions");
+      if (sugg) sugg.remove();
 
       addMsg(body, "user", msg);
       input.value = "";
@@ -219,6 +221,22 @@
         scrollToBottom(body);
       }
     }
+
+    // Suggestion chips — removed after first use
+    const suggestions = el("div", "cw-suggestions");
+    ["Where did Mostafa work most recently?",
+     "Which Languages does Mostafa speak?",
+     "Does Mostafa have Leadership experience?"].forEach(q => {
+      const btn = el("button", "cw-suggestion-btn");
+      btn.textContent = q;
+      btn.addEventListener("click", () => {
+        suggestions.remove();
+        input.value = q;
+        doSend();
+      });
+      suggestions.appendChild(btn);
+    });
+    body.appendChild(suggestions);
 
     send.addEventListener("click", doSend);
     input.addEventListener("keydown", (e) => {
@@ -290,4 +308,5 @@
     else openPanel();
   });
 
+  window.cwOpen = openPanel;
 })();

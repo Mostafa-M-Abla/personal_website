@@ -330,3 +330,28 @@
   }
   .cw-hint::after { display: none; }
 }
+
+/* Suggestion chips */
+.cw-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px 4px;
+}
+.cw-suggestion-btn {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 999px;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 0.78rem;
+  padding: 6px 12px;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+  white-space: normal;
+  line-height: 1.4;
+}
+.cw-suggestion-btn:hover {
+  background: #2563eb;
+  color: #fff;
+}
