@@ -1,7 +1,7 @@
 (function () {
   const API_URL = "https://chatbot-personal-website.fly.dev/chat/stream";
   const ASSISTANT_NAME = "Assistant";
-  const ASSISTANT_STATUS = "Ask me about my work 👋";
+  const ASSISTANT_STATUS = "Ask me about Mostafa Abla 👋";
   const AVATAR_URL = "https://mostafaabla.com/assets/assistant.png"; 
   // ^ Replace with your own. If you don’t have one, leave it empty "".
 
@@ -141,7 +141,7 @@
     panel.appendChild(footer);
 
     // Welcome message
-    addMsg(body, "bot", "Hi! Ask me anything about Mostafa's work 🙂");
+    addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills, ... 🙂");
 
     // Handlers
     function setWaiting(waiting) {
