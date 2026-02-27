@@ -120,6 +120,15 @@
       </svg>
     `;
 
+    const btnReset = el("button", "cw-iconbtn");
+    btnReset.setAttribute("aria-label", "Reset chat");
+    btnReset.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 5V2L8 6l4 4V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"></path>
+      </svg>
+    `;
+
+    actions.appendChild(btnReset);
     actions.appendChild(btnMin);
     actions.appendChild(btnClose);
 
@@ -264,6 +273,30 @@
 
     btnMin.addEventListener("click", closePanel);
     btnClose.addEventListener("click", closePanel);
+
+    btnReset.addEventListener("click", () => {
+      sessionStorage.removeItem(SESSION_ID_KEY);
+      sessionStorage.removeItem(HISTORY_KEY);
+      sessionId = null;
+
+      body.innerHTML = "";
+      addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills, ... 🙂");
+
+      const suggestions = el("div", "cw-suggestions");
+      ["Where did Mostafa work most recently?",
+       "Which Languages does Mostafa speak?",
+       "Does Mostafa have Leadership experience?"].forEach(q => {
+        const btn = el("button", "cw-suggestion-btn");
+        btn.textContent = q;
+        btn.addEventListener("click", () => {
+          suggestions.remove();
+          input.value = q;
+          doSend();
+        });
+        suggestions.appendChild(btn);
+      });
+      body.appendChild(suggestions);
+    });
 
     // Small UX: open focuses input
     setTimeout(() => input.focus(), 50);
