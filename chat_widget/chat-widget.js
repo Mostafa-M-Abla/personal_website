@@ -2,7 +2,7 @@
   const API_URL = "https://chatbot-personal-website.fly.dev/chat/stream";
   const ASSISTANT_NAME = "Mostafa's AI Assistant";
   const ASSISTANT_STATUS = "";
-  const AVATAR_URL = "https://mostafaabla.com/assets/assistant.png";
+  const AVATAR_URL = "https://mostafaabla.com/assets/assistant_2.png";
   // ^ Replace with your own. If you don’t have one, leave it empty "".
 
   // ---------- Helpers ----------
@@ -112,14 +112,6 @@
       </svg>
     `;
 
-    const btnClose = el("button", "cw-iconbtn");
-    btnClose.setAttribute("aria-label", "Close");
-    btnClose.innerHTML = `
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M18.3 5.7 12 12l6.3 6.3-1.4 1.4L10.6 13.4 4.3 19.7 2.9 18.3 9.2 12 2.9 5.7 4.3 4.3l6.3 6.3 6.3-6.3z"></path>
-      </svg>
-    `;
-
     const btnReset = el("button", "cw-iconbtn");
     btnReset.setAttribute("aria-label", "Reset chat");
     btnReset.innerHTML = `
@@ -130,7 +122,6 @@
 
     actions.appendChild(btnReset);
     actions.appendChild(btnMin);
-    actions.appendChild(btnClose);
 
     header.appendChild(avatar);
     header.appendChild(title);
@@ -272,7 +263,6 @@
     });
 
     btnMin.addEventListener("click", closePanel);
-    btnClose.addEventListener("click", closePanel);
 
     btnReset.addEventListener("click", () => {
       sessionStorage.removeItem(SESSION_ID_KEY);
