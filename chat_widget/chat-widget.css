@@ -81,9 +81,9 @@
   background: linear-gradient(180deg, rgba(37,99,235,0.10), rgba(37,99,235,0.02));
 }
 .cw-avatar {
-  width: 43px;
-  height: 43px;
-  border-radius: 1300px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   border: 1px solid var(--cw-border);
   background: #e5e7eb;
   overflow: hidden;
