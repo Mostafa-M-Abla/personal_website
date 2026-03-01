@@ -32,56 +32,36 @@
     document.head.appendChild(link);
   }
 
-  // ---------- Launcher ----------
-  const launcher = el("button", "cw-launcher");
-  launcher.setAttribute("aria-label", "Open chat");
-  launcher.innerHTML = `
+  // ---------- Mini Header ----------
+  const miniHeader = el("div", "cw-mini-header");
+  miniHeader.setAttribute("aria-label", "Open chat");
+
+  const mhAvatar = el("div", "cw-avatar");
+  mhAvatar.innerHTML = AVATAR_URL
+    ? `<img alt="${escapeHtml(ASSISTANT_NAME)}" src="${escapeHtml(AVATAR_URL)}" />`
+    : "";
+
+  const mhTitle = el("div", "cw-title");
+  mhTitle.innerHTML = `<strong>${escapeHtml(ASSISTANT_NAME)}</strong><span>${escapeHtml(ASSISTANT_STATUS)}</span>`;
+
+  const mhActions = el("div", "cw-header-actions");
+  const btnExpand = el("button", "cw-iconbtn");
+  btnExpand.setAttribute("aria-label", "Expand chat");
+  btnExpand.innerHTML = `
     <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 3c-5 0-9 3.6-9 8 0 2.3 1.1 4.4 3 5.9V21l3.3-1.8c.9.2 1.8.3 2.7.3 5 0 9-3.6 9-8s-4-8-9-8zm-4 9h8v2H8v-2zm0-4h8v2H8V8z"></path>
+      <path d="M7 14l5-5 5 5H7z"></path>
     </svg>
   `;
-  document.body.appendChild(launcher);
-  
+  mhActions.appendChild(btnExpand);
+
+  miniHeader.appendChild(mhAvatar);
+  miniHeader.appendChild(mhTitle);
+  miniHeader.appendChild(mhActions);
+  document.body.appendChild(miniHeader);
+
   // --- Session persistence keys ---
   const SESSION_ID_KEY = "cw_session_id_v1";
   const HISTORY_KEY    = "cw_history_v1";
-
-  // --- Nudge: show hint + pulse once until user opens chat ---
-	const NUDGE_SESSION_KEY = "cw_nudge_dismissed_session_v1";
-
-
-	function showNudge() {
-	  if (sessionStorage.getItem(NUDGE_SESSION_KEY) === "1") return;
-
-	  launcher.classList.add("cw-pulse");
-	  setTimeout(() => launcher.classList.remove("cw-pulse"), 8000);
-
-	  const hint = document.createElement("div");
-	  hint.className = "cw-hint";
-	  hint.innerHTML = `
-		<div>
-		  <strong>Questions about Mostafa?</strong>
-		  <p>Ask me about his education, experience, projects, skills, or how he can help your team.</p>
-		</div>
-		<button class="cw-hint-close" aria-label="Dismiss">×</button>
-	  `;
-	  document.body.appendChild(hint);
-
-	  // If user closes hint → mark dismissed for this session
-	  hint.querySelector(".cw-hint-close").addEventListener("click", () => {
-		sessionStorage.setItem(NUDGE_SESSION_KEY, "1");
-		hint.remove();
-	  });
-
-	  // Auto-hide after 12s (but still allow it to show again if not dismissed)
-	  setTimeout(() => {
-		if (hint.isConnected) hint.remove();
-	  }, 12000);
-	}
-
-
-	// Show nudge shortly after load
-	setTimeout(showNudge, 1200);
 
   // ---------- Panel ----------
   let panel = null;
@@ -152,7 +132,7 @@
     } catch {}
 
     if (storedHistory.length === 0) {
-      addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills or education 😀");
+      addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills or background 😀");
     } else {
       storedHistory.forEach(({ who, text }) => addMsg(body, who, text));
     }
@@ -331,31 +311,21 @@
     return row;
   }
 
-	function openPanel() {
-	  if (isOpen) return;
-	  isOpen = true;
-
-	  // mark nudge as dismissed for this session
-	  sessionStorage.setItem(NUDGE_SESSION_KEY, "1");
-
-	  // remove hint if visible
-	  const hint = document.querySelector(".cw-hint");
-	  if (hint) hint.remove();
-	  launcher.classList.remove("cw-pulse");
-
-	  if (!panel) panel = buildPanel();
-	  document.body.appendChild(panel);
-	}
+  function openPanel() {
+    if (isOpen) return;
+    isOpen = true;
+    miniHeader.style.display = "none";
+    if (!panel) panel = buildPanel();
+    document.body.appendChild(panel);
+  }
 
   function closePanel() {
     isOpen = false;
     if (panel && panel.parentNode) panel.parentNode.removeChild(panel);
+    miniHeader.style.display = "flex";
   }
 
-  launcher.addEventListener("click", () => {
-    if (isOpen) closePanel();
-    else openPanel();
-  });
+  miniHeader.addEventListener("click", openPanel);
 
   window.cwOpen = openPanel;
 })();
