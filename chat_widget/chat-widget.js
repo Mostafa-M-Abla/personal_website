@@ -161,7 +161,7 @@
     } catch {}
 
     if (storedHistory.length === 0) {
-      addMsg(body, "bot", "Hi! I’m Mostafa’s AI assistant. Ask me about his experience, projects, or technical skills.");
+      addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills or education");
     } else {
       storedHistory.forEach(({ who, text }) => addMsg(body, who, text));
     }
