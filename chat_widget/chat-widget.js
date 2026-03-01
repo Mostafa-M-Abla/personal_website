@@ -1,8 +1,8 @@
 (function () {
   const API_URL = "https://chatbot-personal-website.fly.dev/chat/stream";
-  const ASSISTANT_NAME = "Assistant";
+  const ASSISTANT_NAME = "Mostafa's AI Assistant";
   const ASSISTANT_STATUS = "";
-  const AVATAR_URL = "https://mostafaabla.com/assets/assistant.png"; 
+  const AVATAR_URL = "https://mostafaabla.com/assets/assistant.png";
   // ^ Replace with your own. If you don’t have one, leave it empty "".
 
   // ---------- Helpers ----------
@@ -161,7 +161,7 @@
     } catch {}
 
     if (storedHistory.length === 0) {
-      addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills, ... 🙂");
+      addMsg(body, "bot", "Hi! I’m Mostafa’s AI assistant. Ask me about his experience, projects, or technical skills.");
     } else {
       storedHistory.forEach(({ who, text }) => addMsg(body, who, text));
     }
