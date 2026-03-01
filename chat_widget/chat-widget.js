@@ -197,12 +197,14 @@
             if (parsed.token) {
               if (!botRow) {
                 typingEl.remove();
-                botRow = addMsg(body, "bot", "");
+                fullText += parsed.token;
+                botRow = addMsg(body, "bot", fullText);
                 bubble = botRow.querySelector(".cw-bubble");
+              } else {
+                fullText += parsed.token;
+                bubble.innerHTML = escapeHtml(fullText);
+                scrollToBottom(body);
               }
-              fullText += parsed.token;
-              bubble.innerHTML = escapeHtml(fullText);
-              scrollToBottom(body);
             } else if (parsed.done && parsed.session_id) {
               sessionId = parsed.session_id;
               sessionStorage.setItem(SESSION_ID_KEY, sessionId);
