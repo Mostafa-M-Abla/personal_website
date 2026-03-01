@@ -83,7 +83,7 @@
 .cw-avatar {
   width: 43px;
   height: 43px;
-  border-radius: 999px;
+  border-radius: 1300px;
   border: 1px solid var(--cw-border);
   background: #e5e7eb;
   overflow: hidden;
