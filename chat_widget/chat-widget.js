@@ -152,7 +152,7 @@
     } catch {}
 
     if (storedHistory.length === 0) {
-      addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills or education");
+      addMsg(body, "bot", "Hi! Ask me about Mostafa's experience, projects, skills or education 😀");
     } else {
       storedHistory.forEach(({ who, text }) => addMsg(body, who, text));
     }
