@@ -171,10 +171,9 @@
           throw new Error(`HTTP ${res.status}: ${txt}`);
         }
 
-        // Remove typing indicator and create an empty bot bubble
-        typingEl.remove();
-        const botRow = addMsg(body, "bot", "");
-        const bubble = botRow.querySelector(".cw-bubble");
+        // botRow/bubble created lazily on first token (keeps typing indicator visible until then)
+        let botRow = null;
+        let bubble = null;
 
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
@@ -196,6 +195,11 @@
             try { parsed = JSON.parse(line.slice(6)); } catch { continue; }
 
             if (parsed.token) {
+              if (!botRow) {
+                typingEl.remove();
+                botRow = addMsg(body, "bot", "");
+                bubble = botRow.querySelector(".cw-bubble");
+              }
               fullText += parsed.token;
               bubble.innerHTML = escapeHtml(fullText);
               scrollToBottom(body);
@@ -203,13 +207,24 @@
               sessionId = parsed.session_id;
               sessionStorage.setItem(SESSION_ID_KEY, sessionId);
             } else if (parsed.error) {
+              if (!botRow) {
+                typingEl.remove();
+                botRow = addMsg(body, "bot", "");
+                bubble = botRow.querySelector(".cw-bubble");
+              }
               bubble.innerHTML = escapeHtml("Error: " + parsed.error);
             }
           }
         }
 
-        if (!fullText) bubble.innerHTML = escapeHtml("(no reply)");
-        else saveToHistory("bot", fullText);
+        if (!fullText) {
+          if (!botRow) {
+            typingEl.remove();
+            botRow = addMsg(body, "bot", "");
+            bubble = botRow.querySelector(".cw-bubble");
+          }
+          bubble.innerHTML = escapeHtml("(no reply)");
+        } else saveToHistory("bot", fullText);
       } catch (e) {
         if (typingEl.parentNode) typingEl.remove();
         addMsg(body, "bot", "Sorry — I couldn't reach the server.");
