@@ -2,7 +2,7 @@
   const API_URL = "https://chatbot-personal-website.fly.dev/chat/stream";
   const ASSISTANT_NAME = "Mostafa's AI Assistant";
   const ASSISTANT_STATUS = "";
-  const AVATAR_URL = "https://mostafaabla.com/assets/assistant_2.png";
+  const AVATAR_URL = "https://mostafaabla.com/assets/assistant_3.png";
   // ^ Replace with your own. If you don’t have one, leave it empty "".
 
   // ---------- Helpers ----------
