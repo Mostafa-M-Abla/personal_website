@@ -4,7 +4,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Stripe Docs AI Assistant – Mostafa Abla</title>
-
+      <!-- Favicon-->
+      <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Google font -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -361,7 +362,8 @@
       const SUGGESTIONS = [
         "How do I create a PaymentIntent?",
         "What webhook events should I handle for subscriptions?",
-        "How does Stripe Billing work?"
+        "How does Stripe Billing work?",
+        "How do I handle failed payments and retries?"
       ];
 
       let sessionId = sessionStorage.getItem("stripe_rag_session") || null;
@@ -452,10 +454,6 @@
         scrollBottom();
       }
 
-      function scoreToPercent(score) {
-        return Math.min(100, Math.max(0, Math.round((score - 0.25) / 0.25 * 100)));
-      }
-
       function toggleChunk(btn) {
         const chunk = btn.closest(".source-chunk");
         const full = chunk.querySelector(".chunk-full");
@@ -484,7 +482,6 @@
         `;
         const list = wrapper.querySelector(".sources-list");
         sources.forEach((s, i) => {
-          const pct = scoreToPercent(s.score || 0);
           const titleText = escHtml(
             [s.title, s.heading_path].filter(Boolean).join(" › ") || s.url
           );
@@ -506,7 +503,7 @@
           card.innerHTML = `
             <div class="source-card-header">
               <span class="source-badge">Source ${i + 1}</span>
-              <span class="source-score">Relevance: ${pct}%</span>
+
             </div>
             <div class="source-title">${titleText}</div>
             ${chunkHtml}
