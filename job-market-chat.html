@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Market Intelligence – Live Demo · Mostafa Abla</title>
+  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap + Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    /* ── Design tokens (match project-job-market-analysis.html) ──────────── */
+    :root {
+      --brand-primary:   #4e73df;
+      --brand-secondary: #1cc88a;
+      --text-strong:     #243041;
+      --text-muted:      #6c757d;
+      --card-bg:         #fff;
+    }
+
+    body { font-family: "Plus Jakarta Sans", sans-serif; background: #f6f7fb; }
+
+    /* ── Layout ──────────────────────────────────────────────────────────── */
+    .page-wrap { max-width: 1100px; margin: 0 auto; width: 100%; }
+
+    .text-gradient {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    /* ── Cards ───────────────────────────────────────────────────────────── */
+    .soft-card {
+      border: 0; border-radius: 1.25rem;
+      background: var(--card-bg);
+      box-shadow: 0 6px 16px rgba(18,38,63,.06);
+    }
+    .section-card {
+      border: 0; border-radius: 1.25rem;
+      background: var(--card-bg);
+      box-shadow: 0 6px 16px rgba(18,38,63,.06);
+      border-left: 6px solid var(--brand-primary);
+    }
+
+    /* ── Navbar ──────────────────────────────────────────────────────────── */
+    .navbar-brand { text-decoration: none; }
+    .navbar-brand:hover { opacity: .9; }
+    .navbar-nav .nav-link { font-weight: 700 !important; }
+
+    /* ── Buttons ─────────────────────────────────────────────────────────── */
+    .btn-solid  { border-radius: 999px; font-weight: 800; padding: .65rem 1.25rem; }
+    .btn-ghost  {
+      --bs-btn-color: var(--brand-primary);
+      --bs-btn-border-color: var(--brand-primary);
+      --bs-btn-hover-color: #fff;
+      --bs-btn-hover-bg: var(--brand-primary);
+      --bs-btn-hover-border-color: var(--brand-primary);
+      border-radius: 999px; font-weight: 800; padding: .6rem 1.2rem;
+    }
+    .btn-back {
+      border-radius: 14px; font-weight: 900; padding: .65rem 1rem;
+      border: 1px solid rgba(36,48,65,.18); background: rgba(36,48,65,.04); color: #243041;
+      font-size: .88rem; white-space: nowrap;
+    }
+    .btn-back:hover { background: rgba(36,48,65,.08); color: #111827; }
+
+    /* ── Messages area ───────────────────────────────────────────────────── */
+    #messages {
+      min-height: 340px;
+      max-height: 56vh;
+      overflow-y: auto;
+      padding: 1.1rem;
+      scroll-behavior: smooth;
+    }
+
+    /* Human bubble */
+    .msg-human { display: flex; justify-content: flex-end; margin-bottom: .7rem; }
+    .msg-human .bubble {
+      max-width: 75%;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      color: #fff;
+      border-radius: 1rem 1rem .25rem 1rem;
+      padding: .65rem 1rem;
+      font-size: .93rem;
+      line-height: 1.5;
+      box-shadow: 0 2px 8px rgba(78,115,223,.22);
+    }
+
+    /* AI bubble */
+    .msg-ai { display: flex; align-items: flex-start; gap: .5rem; margin-bottom: .7rem; }
+    .msg-ai .avatar {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; margin-top: 4px;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: .82rem;
+    }
+    .msg-ai .bubble {
+      max-width: 85%;
+      background: #fff;
+      border-radius: .25rem 1rem 1rem 1rem;
+      padding: .75rem 1rem;
+      font-size: .91rem;
+      line-height: 1.65;
+      box-shadow: 0 2px 8px rgba(18,38,63,.07);
+      color: var(--text-strong);
+    }
+
+    /* Typing dots */
+    .typing-dots { display: flex; gap: 4px; align-items: center; padding: 4px 2px; }
+    .typing-dots span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--brand-primary); opacity: .65;
+      animation: tdot 1.2s infinite;
+    }
+    .typing-dots span:nth-child(2) { animation-delay: .2s; }
+    .typing-dots span:nth-child(3) { animation-delay: .4s; }
+    @keyframes tdot { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+    /* Markdown inside AI bubble */
+    .bubble-content table  { width:100%; border-collapse:collapse; font-size:.86rem; margin:.5rem 0; }
+    .bubble-content th     { background:rgba(78,115,223,.1); color:var(--text-strong); font-weight:700; padding:.38rem .6rem; text-align:left; }
+    .bubble-content td     { padding:.32rem .6rem; border-top:1px solid rgba(36,48,65,.08); }
+    .bubble-content tr:nth-child(even) td { background:rgba(78,115,223,.04); }
+    .bubble-content h2,.bubble-content h3,.bubble-content h4 { font-size:.94rem; font-weight:700; margin:.8rem 0 .3rem; color:var(--text-strong); }
+    .bubble-content ul,.bubble-content ol { padding-left:1.2rem; margin:.35rem 0; }
+    .bubble-content li  { margin-bottom:.15rem; }
+    .bubble-content code { background:rgba(78,115,223,.1); padding:1px 5px; border-radius:4px; font-size:.84em; }
+    .bubble-content strong { color:var(--text-strong); }
+    .bubble-content p  { margin-bottom:.35rem; }
+    .bubble-content p:last-child { margin-bottom:0; }
+    .bubble-content pre  { background:#f8f9fa; border-radius:.5rem; padding:.6rem .8rem; overflow-x:auto; }
+    .bubble-content pre code { background:none; padding:0; }
+
+    /* Report link button inside bubble */
+    .report-link-btn {
+      display: inline-flex; align-items: center; gap: .35rem;
+      margin-top: .6rem;
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      color: #fff; padding: .4rem .9rem; border-radius: 999px;
+      font-size: .82rem; font-weight: 700; text-decoration: none;
+      transition: opacity .15s;
+    }
+    .report-link-btn:hover { opacity: .88; color: #fff; }
+
+    /* Cache badge */
+    .cache-badge {
+      display: inline-flex; align-items: center; gap: .25rem;
+      margin-top: .4rem;
+      background: rgba(16,185,129,.1); border: 1px solid rgba(16,185,129,.25);
+      border-radius: 999px; padding: .2rem .6rem;
+      font-size: .74rem; color: #047857; font-weight: 700;
+    }
+
+    /* ── HITL interrupt card ─────────────────────────────────────────────── */
+    #interrupt-card {
+      border-radius: 1rem;
+      border-left: 5px solid #f59e0b;
+      background: #fffbeb;
+      padding: 1rem 1.2rem;
+      box-shadow: 0 4px 14px rgba(245,158,11,.14);
+    }
+    .hitl-header {
+      font-weight: 700; font-size: .84rem; color: #92400e;
+      margin-bottom: .5rem;
+      display: flex; align-items: center; gap: .3rem;
+    }
+    #interrupt-prompt {
+      font-size: .9rem; color: var(--text-strong);
+      white-space: pre-wrap; line-height: 1.55;
+      margin-bottom: .8rem;
+    }
+
+    /* ── Input area ──────────────────────────────────────────────────────── */
+    #input-area {
+      background: #fff; border-radius: 1rem; padding: .8rem;
+      box-shadow: 0 4px 16px rgba(18,38,63,.07);
+    }
+    #message-input {
+      border: 1.5px solid rgba(36,48,65,.12); border-radius: .75rem; font-size: .94rem;
+    }
+    #message-input:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 3px rgba(78,115,223,.12); outline: none; }
+    #send-btn {
+      background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+      border: none; border-radius: .75rem; color: #fff;
+      padding: 0 1.3rem; font-weight: 700; min-width: 52px;
+      transition: opacity .15s; cursor: pointer;
+    }
+    #send-btn:hover  { opacity: .9; }
+    #send-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    /* ── Node indicator ──────────────────────────────────────────────────── */
+    #node-indicator {
+      font-size: .78rem; color: var(--brand-primary); font-weight: 700;
+      padding: .3rem .75rem;
+      background: rgba(78,115,223,.08); border-radius: 999px;
+      display: inline-flex; align-items: center; gap: .4rem;
+    }
+    .node-pulse {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--brand-primary);
+      animation: npulse 1s infinite;
+    }
+    @keyframes npulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+    /* ── Sidebar cards ───────────────────────────────────────────────────── */
+    .sidebar-card {
+      background: #fff; border-radius: 1rem; padding: 1rem 1.1rem;
+      box-shadow: 0 4px 12px rgba(18,38,63,.06); margin-bottom: .9rem;
+    }
+    .sidebar-title {
+      font-weight: 800; font-size: .77rem; text-transform: uppercase;
+      letter-spacing: .5px; color: var(--text-muted); margin-bottom: .6rem;
+    }
+
+    /* Pipeline steps */
+    .pipeline-step {
+      display: flex; align-items: center; gap: .45rem;
+      padding: .2rem 0; font-size: .8rem; color: #9ca3af;
+      transition: color .2s;
+    }
+    .step-dot {
+      width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
+      border: 2px solid #d1d5db;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .55rem; transition: all .2s;
+    }
+    .pipeline-step.step-active { color: var(--brand-primary); font-weight: 700; }
+    .pipeline-step.step-active .step-dot {
+      border-color: var(--brand-primary);
+      background: rgba(78,115,223,.12);
+      animation: npulse 1s infinite;
+    }
+    .pipeline-step.step-done { color: #10b981; font-weight: 600; }
+    .pipeline-step.step-done .step-dot {
+      border-color: #10b981; background: #10b981; color: #fff;
+    }
+
+    /* Resume drop zone */
+    #resume-drop-zone {
+      border: 2px dashed rgba(78,115,223,.28); border-radius: .75rem;
+      padding: .9rem; text-align: center; cursor: pointer;
+      transition: background .15s, border-color .15s;
+      font-size: .83rem; color: var(--text-muted);
+    }
+    #resume-drop-zone:hover, #resume-drop-zone.drag-over {
+      background: rgba(78,115,223,.05); border-color: var(--brand-primary);
+    }
+
+    /* Example prompt chips */
+    .tip-chip {
+      display: inline-block;
+      background: rgba(78,115,223,.08); border: 1px solid rgba(78,115,223,.14);
+      border-radius: 999px; padding: .28rem .7rem;
+      font-size: .78rem; color: var(--brand-primary); cursor: pointer;
+      margin: .12rem; font-weight: 600;
+      transition: background .15s, transform .1s;
+    }
+    .tip-chip:hover { background: rgba(78,115,223,.16); transform: translateY(-1px); }
+
+    @media (max-width: 992px) {
+      #messages { max-height: 42vh; }
+    }
+  </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+<main class="flex-shrink-0">
+
+  <!-- ── Navigation ────────────────────────────────────────────────────── -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white py-3">
+    <div class="container px-5">
+      <a class="navbar-brand fw-bolder text-primary" href="index.html" style="font-size:1.35rem;">Mostafa Abla</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+              aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder align-items-center">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="resume.html">Resume</a></li>
+          <li class="nav-item"><a class="nav-link" href="projects.html">Projects</a></li>
+          <li class="nav-item"><a class="nav-link" href="javascript:void(0);" onclick="if(window.cwOpen)window.cwOpen();">Chat</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+          <li class="nav-item">
+            <a href="http://linkedin.com/in/mostafa-abla-984a5820a/" target="_blank" class="nav-link text-primary me-1">
+              <i class="bi bi-linkedin" style="font-size:1.3rem;"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="https://github.com/Mostafa-M-Abla" target="_blank" class="nav-link text-dark">
+              <i class="bi bi-github" style="font-size:1.3rem;"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Hero ──────────────────────────────────────────────────────────── -->
+  <header class="py-4">
+    <div class="container px-4 px-md-5">
+      <div class="page-wrap">
+        <div class="soft-card p-4 p-md-5">
+          <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-4">
+            <div>
+              <h1 class="h3 fw-bolder mb-1">
+                <span class="text-gradient">Job Market Intelligence</span>
+                <span class="ms-2 badge rounded-pill" style="background:rgba(16,185,129,.15);color:#047857;font-size:.6rem;vertical-align:middle;">Live Demo</span>
+              </h1>
+              <p class="mb-0 text-muted" style="font-size:.93rem;">
+                A LangGraph agentic system with real SerpAPI job data, structured LLM analysis,
+                and human-in-the-loop confirmation — streaming live via SSE.
+              </p>
+            </div>
+            <a class="btn btn-back" href="project-job-market-analysis.html">
+              <i class="bi bi-arrow-left me-1"></i>About this project
+            </a>
+          </div>
+
+          <div class="row g-2">
+            <div class="col-sm-4">
+              <div class="p-2 rounded-3 h-100" style="background:rgba(78,115,223,.06);">
+                <div class="fw-bolder small mb-1"><i class="bi bi-robot me-1"></i>4 Intents</div>
+                <div class="text-muted" style="font-size:.77rem;">General Q&A · Focused market question · Full analysis · Resume gap review</div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded-3 h-100" style="background:rgba(28,200,138,.08);">
+                <div class="fw-bolder small mb-1"><i class="bi bi-person-check me-1"></i>Human-in-the-Loop</div>
+                <div class="text-muted" style="font-size:.77rem;">Confirm search parameters and choose report format before running</div>
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <div class="p-2 rounded-3 h-100" style="background:rgba(245,158,11,.08);">
+                <div class="fw-bolder small mb-1"><i class="bi bi-lightning-charge me-1"></i>Real-time Streaming</div>
+                <div class="text-muted" style="font-size:.77rem;">LLM tokens stream live · Pipeline steps update as the graph runs</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Chat application ──────────────────────────────────────────────── -->
+  <section class="pb-5">
+    <div class="container px-4 px-md-5">
+      <div class="page-wrap">
+        <div class="row gx-4">
+
+          <!-- ── Left: Chat panel ────────────────────────────────────────── -->
+          <div class="col-lg-8 mb-4">
+
+            <!-- Messages -->
+            <div class="soft-card mb-3">
+              <div id="messages"></div>
+            </div>
+
+            <!-- Active node indicator -->
+            <div id="node-indicator-wrap" class="mb-2 d-none">
+              <span id="node-indicator">
+                <span class="node-pulse"></span>
+                <span id="node-label">Processing…</span>
+              </span>
+            </div>
+
+            <!-- HITL interrupt card (hidden until interrupt fires) -->
+            <div id="interrupt-card" class="mb-3 d-none">
+              <div class="hitl-header">
+                <i class="bi bi-pause-circle-fill text-warning"></i>
+                Action required before proceeding
+              </div>
+              <div id="interrupt-prompt"></div>
+              <!-- Free-text reply (for confirm_search_params) -->
+              <div id="hitl-text-wrap" class="d-flex gap-2 d-none">
+                <input id="interrupt-input" class="form-control rounded-3" style="font-size:.9rem;"
+                       placeholder="Type 'confirm' to proceed, or describe what to change…" />
+                <button class="btn btn-warning fw-bolder rounded-3 px-3" onclick="sendHitlReply()">
+                  Send <i class="bi bi-send-fill ms-1"></i>
+                </button>
+              </div>
+              <!-- A / B buttons (for confirm_report_format) -->
+              <div id="hitl-ab-wrap" class="d-flex gap-2 flex-wrap d-none">
+                <button class="btn btn-primary btn-solid" onclick="sendHitlReply('A')">
+                  <i class="bi bi-file-earmark-richtext me-1"></i>A — Full HTML Report
+                </button>
+                <button class="btn btn-outline-secondary btn-solid" onclick="sendHitlReply('B')">
+                  <i class="bi bi-chat-text me-1"></i>B — Text Summary
+                </button>
+              </div>
+            </div>
+
+            <!-- Main input -->
+            <div id="input-area">
+              <div class="d-flex gap-2">
+                <input id="message-input" type="text" class="form-control form-control-lg"
+                       placeholder="Ask about job trends, request a full market analysis, or upload a resume for a gap review…"
+                       autocomplete="off" />
+                <button id="send-btn" onclick="handleSend()" aria-label="Send">
+                  <i class="bi bi-send-fill"></i>
+                </button>
+              </div>
+              <div class="d-flex justify-content-between align-items-center mt-2 px-1">
+                <span class="text-muted" style="font-size:.74rem;">
+                  <i class="bi bi-keyboard me-1"></i>Press <kbd>Enter</kbd> to send
+                </span>
+                <button class="btn btn-sm text-muted p-0" style="font-size:.74rem;" onclick="clearSession()">
+                  <i class="bi bi-arrow-counterclockwise me-1"></i>New session
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Right: Sidebar ──────────────────────────────────────────── -->
+          <div class="col-lg-4">
+
+            <!-- Session -->
+            <div class="sidebar-card">
+              <div class="sidebar-title"><i class="bi bi-key me-1"></i>Session</div>
+              <div class="d-flex align-items-center gap-2 flex-wrap">
+                <code id="session-badge"
+                      style="color:var(--brand-primary);background:rgba(78,115,223,.09);padding:2px 8px;border-radius:6px;font-size:.77rem;"></code>
+                <span id="resume-status" class="d-none"
+                      style="background:rgba(16,185,129,.13);color:#047857;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;">
+                  <i class="bi bi-file-earmark-check me-1"></i>Resume uploaded
+                </span>
+              </div>
+            </div>
+
+            <!-- Resume upload -->
+            <div class="sidebar-card">
+              <div class="sidebar-title"><i class="bi bi-file-earmark-person me-1"></i>Resume Upload</div>
+              <div id="resume-drop-zone"
+                   onclick="document.getElementById('resume-file-input').click()"
+                   ondragover="event.preventDefault();this.classList.add('drag-over')"
+                   ondragleave="this.classList.remove('drag-over')"
+                   ondrop="handleResumeDrop(event)">
+                <i class="bi bi-upload mb-1 d-block" style="font-size:1.4rem;color:var(--brand-primary);"></i>
+                <div class="fw-bolder small">Drop PDF here or click to upload</div>
+                <div style="font-size:.74rem;">Required only for resume gap analysis</div>
+              </div>
+              <input id="resume-file-input" type="file" accept=".pdf" class="d-none"
+                     onchange="handleResumeFile(this.files[0])">
+              <div id="resume-upload-result" class="mt-2 d-none"></div>
+            </div>
+
+            <!-- Pipeline -->
+            <div class="sidebar-card">
+              <div class="sidebar-title"><i class="bi bi-diagram-3 me-1"></i>Pipeline</div>
+              <div id="pipeline-steps"></div>
+            </div>
+
+            <!-- Tips -->
+            <div class="sidebar-card">
+              <div class="sidebar-title"><i class="bi bi-lightbulb me-1"></i>Try asking…</div>
+              <div id="tips-container"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="bg-white py-4 mt-auto">
+  <div class="container px-5">
+    <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+      <div class="col-auto"><div class="small m-0">Copyright &copy; Mostafa Abla 2025</div></div>
+      <div class="col-auto"><a class="small" href="contact.html">Contact</a></div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Marked.js — lightweight markdown renderer for AI responses -->
+<script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   CONFIGURATION
+   Change API_BASE to point at the fly.io deployment once deployed.
+   For local testing, set to 'http://localhost:8000'.
+═══════════════════════════════════════════════════════════════════════════ */
+const API_BASE = 'https://job-market-intelligence-system.fly.dev';
+
+const PIPELINE_NODES = [
+  { id: 'intent_resolver',        label: 'Classifying intent' },
+  { id: 'check_resume',           label: 'Checking resume' },
+  { id: 'resume_parser',          label: 'Parsing resume' },
+  { id: 'cache_lookup',           label: 'Checking cache' },
+  { id: 'confirm_search_params',  label: 'Awaiting confirmation' },
+  { id: 'job_collector',          label: 'Collecting job postings' },
+  { id: 'requirements_extractor', label: 'Extracting requirements' },
+  { id: 'market_analyzer',        label: 'Analyzing market' },
+  { id: 'skill_gap_analyzer',     label: 'Analyzing skill gaps' },
+  { id: 'answer_focused',         label: 'Generating answer' },
+  { id: 'confirm_report_format',  label: 'Awaiting format choice' },
+  { id: 'html_report_generator',  label: 'Generating HTML report' },
+  { id: 'respond',                label: 'Composing response' },
+];
+
+const TIPS = [
+  'Analyse the AI Engineer job market in Germany',
+  'What cloud platforms are most in-demand for ML Engineer roles in the UK?',
+  'What certifications are required for DevOps jobs in the Netherlands?',
+  'What skills am I missing for Data Engineer jobs in France?',
+  "What's the difference between LangGraph and CrewAI?",
+];
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════════════════════ */
+let sessionId         = null;
+let isStreaming        = false;
+let currentBubble     = null;   // .bubble-content div receiving tokens
+let currentBubbleRaw  = '';     // accumulated raw markdown
+let lastActiveNode    = null;   // last node_start node id
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', () => {
+  initSession();
+  renderPipeline();
+  renderTips();
+  renderWelcome();
+
+  document.getElementById('message-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+  });
+  document.getElementById('interrupt-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); sendHitlReply(); }
+  });
+});
+
+/* ─── Session ────────────────────────────────────────────────────────────── */
+function initSession() {
+  sessionId = localStorage.getItem('jmis_session');
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    localStorage.setItem('jmis_session', sessionId);
+  }
+  document.getElementById('session-badge').textContent = sessionId.slice(0, 8) + '…';
+}
+
+function clearSession() {
+  if (!confirm('Start a new session? The current conversation context will be cleared.')) return;
+  localStorage.removeItem('jmis_session');
+  location.reload();
+}
+
+/* ─── Static renders ─────────────────────────────────────────────────────── */
+function renderPipeline() {
+  document.getElementById('pipeline-steps').innerHTML = PIPELINE_NODES.map(n => `
+    <div class="pipeline-step" id="step-${n.id}">
+      <div class="step-dot"></div>
+      <span>${n.label}</span>
+    </div>
+  `).join('');
+}
+
+function renderTips() {
+  document.getElementById('tips-container').innerHTML = TIPS.map(t => `
+    <span class="tip-chip" onclick="useTip(this.dataset.prompt)" data-prompt="${esc(t)}">${esc(t)}</span>
+  `).join('');
+}
+
+function useTip(text) {
+  if (isStreaming) return;
+  // Strip parenthetical notes like "(upload resume first)"
+  const clean = text.replace(/\s*\(.*?\)/g, '').trim();
+  const input = document.getElementById('message-input');
+  input.value = clean;
+  input.focus();
+}
+
+function renderWelcome() {
+  addAiBubble(`**Welcome!** Here's what I can do:
+
+- **Market analysis** — full job market breakdown for any role and country
+- **Focused questions** — cloud platforms, certifications, frameworks, etc.
+- **Resume gap review** — upload your resume in the sidebar, then ask what you're missing
+- **General questions** — tool comparisons, career advice, anything AI/ML-related
+
+*For market analysis I'll ask you to confirm search parameters before calling the API.*`);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SEND MESSAGE
+═══════════════════════════════════════════════════════════════════════════ */
+async function handleSend() {
+  const input = document.getElementById('message-input');
+  const text  = input.value.trim();
+  if (!text || isStreaming) return;
+  input.value = '';
+
+  setStreaming(true);
+  resetPipeline();
+  addHumanBubble(text);
+  startAiBubble();
+
+  try {
+    const res = await fetch(`${API_BASE}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: text, session_id: sessionId, total_posts: 10 }),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || `HTTP ${res.status}`);
+    await readSSE(res);
+  } catch (e) {
+    finalizeAiBubble(false);
+    addErrorBubble(e.message);
+    setStreaming(false);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SEND HITL REPLY
+═══════════════════════════════════════════════════════════════════════════ */
+async function sendHitlReply(fixed = null) {
+  const reply = fixed ?? document.getElementById('interrupt-input').value.trim();
+  if (!reply) return;
+  hideInterrupt();
+  setStreaming(true);
+  addHumanBubble(reply);
+  startAiBubble();
+
+  try {
+    const res = await fetch(`${API_BASE}/api/chat/${sessionId}/reply`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ reply }),
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || `HTTP ${res.status}`);
+    await readSSE(res);
+  } catch (e) {
+    finalizeAiBubble(false);
+    addErrorBubble(e.message);
+    setStreaming(false);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SSE STREAM READER
+   Uses Fetch + ReadableStream because EventSource only supports GET.
+═══════════════════════════════════════════════════════════════════════════ */
+async function readSSE(response) {
+  const reader  = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    const parts = buffer.split('\n\n');
+    buffer = parts.pop();
+
+    for (const part of parts) {
+      if (!part.trim() || part.startsWith(':')) continue; // skip comments/pings
+      const lines = part.trim().split('\n');
+      let evType = '', evData = '';
+      for (const line of lines) {
+        if (line.startsWith('event: ')) evType = line.slice(7).trim();
+        if (line.startsWith('data: '))  evData = line.slice(6).trim();
+      }
+      if (evType && evData) {
+        try { handleEvent(evType, JSON.parse(evData)); } catch (_) {}
+      }
+    }
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   EVENT DISPATCH
+═══════════════════════════════════════════════════════════════════════════ */
+function handleEvent(type, data) {
+  switch (type) {
+    case 'node_start':
+      setNodeActive(data.node);
+      break;
+
+    case 'token':
+      appendToken(data.content);
+      break;
+
+    case 'interrupt':
+      if (lastActiveNode) setNodeDone(lastActiveNode);
+      hideNodeIndicator();
+      finalizeAiBubble(false); // empty bubble — remove it
+      showInterrupt(data.prompt);
+      setStreaming(false);
+      break;
+
+    case 'done':
+      if (lastActiveNode) setNodeDone(lastActiveNode);
+      hideNodeIndicator();
+      finalizeAiBubble(true);
+      if (data.html_report_path) addReportLink(data.html_report_path);
+      if (data.cache_hit)        addCacheBadge();
+      setStreaming(false);
+      break;
+
+    case 'error':
+      if (lastActiveNode) setNodeDone(lastActiveNode);
+      hideNodeIndicator();
+      finalizeAiBubble(false);
+      addErrorBubble(data.detail);
+      setStreaming(false);
+      break;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   MESSAGE RENDERING
+═══════════════════════════════════════════════════════════════════════════ */
+function addHumanBubble(text) {
+  const msgs = document.getElementById('messages');
+  const div  = document.createElement('div');
+  div.className = 'msg-human';
+  div.innerHTML = `<div class="bubble">${esc(text)}</div>`;
+  msgs.appendChild(div);
+  scrollDown();
+}
+
+function addAiBubble(markdown) {
+  // Static AI bubble (used for welcome message)
+  const msgs = document.getElementById('messages');
+  const div  = document.createElement('div');
+  div.className = 'msg-ai';
+  div.innerHTML = `
+    <div class="avatar"><i class="bi bi-graph-up-arrow"></i></div>
+    <div class="bubble"><div class="bubble-content">${renderMd(markdown)}</div></div>
+  `;
+  msgs.appendChild(div);
+  scrollDown();
+}
+
+function startAiBubble() {
+  currentBubbleRaw = '';
+  const msgs = document.getElementById('messages');
+  const div  = document.createElement('div');
+  div.className = 'msg-ai';
+  div.innerHTML = `
+    <div class="avatar"><i class="bi bi-graph-up-arrow"></i></div>
+    <div class="bubble">
+      <div class="typing-dots"><span></span><span></span><span></span></div>
+      <div class="bubble-content" style="display:none;"></div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  currentBubble = div.querySelector('.bubble-content');
+  scrollDown();
+}
+
+function appendToken(content) {
+  if (!currentBubble) return;
+  currentBubbleRaw += content;
+
+  // Hide typing dots on first token
+  const dots = currentBubble.closest('.bubble')?.querySelector('.typing-dots');
+  if (dots && dots.style.display !== 'none') {
+    dots.style.display = 'none';
+    currentBubble.style.display = '';
+  }
+  // Show raw text while streaming (fast path — no markdown overhead)
+  currentBubble.textContent = currentBubbleRaw;
+  scrollDown();
+}
+
+function finalizeAiBubble(renderMarkdown = true) {
+  if (!currentBubble) return;
+  const bubble = currentBubble.closest('.bubble');
+  const dots   = bubble?.querySelector('.typing-dots');
+  if (dots) dots.style.display = 'none';
+  currentBubble.style.display = '';
+
+  if (renderMarkdown && currentBubbleRaw.trim()) {
+    currentBubble.innerHTML = renderMd(currentBubbleRaw);
+  } else if (!currentBubbleRaw.trim()) {
+    currentBubble.closest('.msg-ai')?.remove();
+  }
+
+  scrollDown();
+  currentBubble    = null;
+  currentBubbleRaw = '';
+}
+
+function addErrorBubble(msg) {
+  const msgs = document.getElementById('messages');
+  const div  = document.createElement('div');
+  div.className = 'msg-ai';
+  div.innerHTML = `
+    <div class="avatar" style="background:linear-gradient(135deg,#ef4444,#dc2626);">
+      <i class="bi bi-exclamation-triangle-fill"></i>
+    </div>
+    <div class="bubble" style="border-left:3px solid #ef4444;">
+      <div class="bubble-content">
+        <strong style="color:#dc2626;">Something went wrong</strong><br>
+        <span class="text-muted small">${esc(msg)}</span>
+      </div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  scrollDown();
+}
+
+function addReportLink(path) {
+  const lastContent = getLastBubbleContent();
+  if (!lastContent) return;
+  const a = document.createElement('a');
+  a.href      = `${API_BASE}${path}`;
+  a.target    = '_blank';
+  a.rel       = 'noopener';
+  a.className = 'report-link-btn d-block mt-2';
+  a.innerHTML = '<i class="bi bi-file-earmark-richtext"></i> Open Full HTML Report';
+  lastContent.appendChild(a);
+}
+
+function addCacheBadge() {
+  const lastContent = getLastBubbleContent();
+  if (!lastContent) return;
+  const badge = document.createElement('div');
+  badge.className = 'cache-badge';
+  badge.innerHTML = '<i class="bi bi-lightning-fill"></i> Served from cache';
+  lastContent.appendChild(badge);
+}
+
+function getLastBubbleContent() {
+  const msgs = document.getElementById('messages');
+  const all  = [...msgs.querySelectorAll('.msg-ai .bubble-content')];
+  return all.at(-1) || null;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HITL
+═══════════════════════════════════════════════════════════════════════════ */
+function showInterrupt(prompt) {
+  const isAB = prompt.includes('Reply A or B');
+  document.getElementById('interrupt-prompt').textContent = prompt;
+  document.getElementById('hitl-text-wrap').classList.toggle('d-none',  isAB);
+  document.getElementById('hitl-ab-wrap').classList.toggle('d-none', !isAB);
+  document.getElementById('interrupt-card').classList.remove('d-none');
+  if (!isAB) {
+    document.getElementById('interrupt-input').value = '';
+    document.getElementById('interrupt-input').focus();
+  }
+  scrollDown();
+}
+
+function hideInterrupt() {
+  document.getElementById('interrupt-card').classList.add('d-none');
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   PIPELINE PROGRESS
+═══════════════════════════════════════════════════════════════════════════ */
+function resetPipeline() {
+  lastActiveNode = null;
+  PIPELINE_NODES.forEach(n => {
+    const el = document.getElementById(`step-${n.id}`);
+    if (el) { el.className = 'pipeline-step'; el.querySelector('.step-dot').textContent = ''; }
+  });
+}
+
+function setNodeActive(id) {
+  if (lastActiveNode && lastActiveNode !== id) setNodeDone(lastActiveNode);
+  lastActiveNode = id;
+  const el = document.getElementById(`step-${id}`);
+  if (el) el.className = 'pipeline-step step-active';
+
+  const label = PIPELINE_NODES.find(n => n.id === id)?.label || id;
+  document.getElementById('node-label').textContent = label;
+  document.getElementById('node-indicator-wrap').classList.remove('d-none');
+}
+
+function setNodeDone(id) {
+  if (!id) return;
+  const el = document.getElementById(`step-${id}`);
+  if (!el) return;
+  el.className = 'pipeline-step step-done';
+  el.querySelector('.step-dot').textContent = '✓';
+}
+
+function hideNodeIndicator() {
+  document.getElementById('node-indicator-wrap').classList.add('d-none');
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESUME UPLOAD
+═══════════════════════════════════════════════════════════════════════════ */
+function handleResumeDrop(e) {
+  e.preventDefault();
+  document.getElementById('resume-drop-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handleResumeFile(file);
+}
+
+async function handleResumeFile(file) {
+  if (!file) return;
+  if (!file.name.toLowerCase().endsWith('.pdf')) {
+    showUploadStatus('error', 'Only PDF files are accepted.');
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    showUploadStatus('error', 'File too large (max 10 MB).');
+    return;
+  }
+
+  showUploadStatus('loading', 'Uploading…');
+  const body = new FormData();
+  body.append('file', file);
+
+  try {
+    const res = await fetch(`${API_BASE}/api/chat/${sessionId}/resume`, { method: 'POST', body });
+    if (!res.ok) throw new Error((await res.json()).detail || `HTTP ${res.status}`);
+    showUploadStatus('success', `${file.name} — uploaded ✓`);
+    document.getElementById('resume-status').classList.remove('d-none');
+  } catch (e) {
+    showUploadStatus('error', e.message);
+  }
+}
+
+function showUploadStatus(status, msg) {
+  const el = document.getElementById('resume-upload-result');
+  el.classList.remove('d-none');
+  const color = { success: '#047857', error: '#dc2626', loading: '#6c757d' }[status];
+  const icon  = { success: 'check-circle-fill', error: 'x-circle-fill', loading: 'hourglass-split' }[status];
+  el.innerHTML = `<span style="color:${color};font-size:.8rem;font-weight:700;">
+    <i class="bi bi-${icon} me-1"></i>${esc(msg)}</span>`;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════════════════════ */
+function setStreaming(v) {
+  isStreaming = v;
+  document.getElementById('message-input').disabled = v;
+  document.getElementById('send-btn').disabled       = v;
+}
+
+function scrollDown() {
+  const msgs = document.getElementById('messages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function renderMd(md) {
+  try {
+    return marked.parse(md, { breaks: true, gfm: true });
+  } catch (_) {
+    return esc(md);
+  }
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+</script>
+</body>
+</html>
