@@ -16,7 +16,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
-    /* ── Design tokens (match project-job-market-analysis.html) ──────────── */
+    /* ── Design tokens ───────────────────────────────────────────────────── */
     :root {
       --brand-primary:   #4e73df;
       --brand-secondary: #1cc88a;
@@ -27,7 +27,6 @@
 
     body { font-family: "Plus Jakarta Sans", sans-serif; background: #f6f7fb; }
 
-    /* ── Layout ──────────────────────────────────────────────────────────── */
     .page-wrap { max-width: 1100px; margin: 0 auto; width: 100%; }
 
     .text-gradient {
@@ -41,12 +40,6 @@
       background: var(--card-bg);
       box-shadow: 0 6px 16px rgba(18,38,63,.06);
     }
-    .section-card {
-      border: 0; border-radius: 1.25rem;
-      background: var(--card-bg);
-      box-shadow: 0 6px 16px rgba(18,38,63,.06);
-      border-left: 6px solid var(--brand-primary);
-    }
 
     /* ── Navbar ──────────────────────────────────────────────────────────── */
     .navbar-brand { text-decoration: none; }
@@ -55,27 +48,19 @@
 
     /* ── Buttons ─────────────────────────────────────────────────────────── */
     .btn-solid  { border-radius: 999px; font-weight: 800; padding: .65rem 1.25rem; }
-    .btn-ghost  {
-      --bs-btn-color: var(--brand-primary);
-      --bs-btn-border-color: var(--brand-primary);
-      --bs-btn-hover-color: #fff;
-      --bs-btn-hover-bg: var(--brand-primary);
-      --bs-btn-hover-border-color: var(--brand-primary);
-      border-radius: 999px; font-weight: 800; padding: .6rem 1.2rem;
-    }
     .btn-back {
       border-radius: 14px; font-weight: 900; padding: .65rem 1rem;
       border: 1px solid rgba(36,48,65,.18); background: rgba(36,48,65,.04); color: #243041;
-      font-size: .88rem; white-space: nowrap;
+      font-size: .88rem; white-space: nowrap; display: inline-flex; align-items: center;
     }
     .btn-back:hover { background: rgba(36,48,65,.08); color: #111827; }
 
     /* ── Messages area ───────────────────────────────────────────────────── */
     #messages {
-      min-height: 340px;
-      max-height: 56vh;
+      min-height: 300px;
+      max-height: 58vh;
       overflow-y: auto;
-      padding: 1.1rem;
+      padding: 1.1rem 1.1rem 0;
       scroll-behavior: smooth;
     }
 
@@ -177,9 +162,9 @@
     }
 
     /* ── Input area ──────────────────────────────────────────────────────── */
-    #input-area {
-      background: #fff; border-radius: 1rem; padding: .8rem;
-      box-shadow: 0 4px 16px rgba(18,38,63,.07);
+    #input-section {
+      border-top: 1px solid rgba(36,48,65,.07);
+      padding: .9rem 1.1rem .8rem;
     }
     #message-input {
       border: 1.5px solid rgba(36,48,65,.12); border-radius: .75rem; font-size: .94rem;
@@ -189,10 +174,18 @@
       background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
       border: none; border-radius: .75rem; color: #fff;
       padding: 0 1.3rem; font-weight: 700; min-width: 52px;
-      transition: opacity .15s; cursor: pointer;
+      transition: opacity .15s; cursor: pointer; flex-shrink: 0;
     }
     #send-btn:hover  { opacity: .9; }
     #send-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+    #attach-btn {
+      background: rgba(78,115,223,.09);
+      border: none; border-radius: .75rem; color: var(--brand-primary);
+      padding: 0 .9rem; font-size: 1.05rem; min-width: 44px;
+      transition: background .15s; cursor: pointer; flex-shrink: 0;
+    }
+    #attach-btn:hover { background: rgba(78,115,223,.18); }
 
     /* ── Node indicator ──────────────────────────────────────────────────── */
     #node-indicator {
@@ -207,50 +200,6 @@
     }
     @keyframes npulse { 0%,100%{opacity:1} 50%{opacity:.25} }
 
-    /* ── Sidebar cards ───────────────────────────────────────────────────── */
-    .sidebar-card {
-      background: #fff; border-radius: 1rem; padding: 1rem 1.1rem;
-      box-shadow: 0 4px 12px rgba(18,38,63,.06); margin-bottom: .9rem;
-    }
-    .sidebar-title {
-      font-weight: 800; font-size: .77rem; text-transform: uppercase;
-      letter-spacing: .5px; color: var(--text-muted); margin-bottom: .6rem;
-    }
-
-    /* Pipeline steps */
-    .pipeline-step {
-      display: flex; align-items: center; gap: .45rem;
-      padding: .2rem 0; font-size: .8rem; color: #9ca3af;
-      transition: color .2s;
-    }
-    .step-dot {
-      width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0;
-      border: 2px solid #d1d5db;
-      display: flex; align-items: center; justify-content: center;
-      font-size: .55rem; transition: all .2s;
-    }
-    .pipeline-step.step-active { color: var(--brand-primary); font-weight: 700; }
-    .pipeline-step.step-active .step-dot {
-      border-color: var(--brand-primary);
-      background: rgba(78,115,223,.12);
-      animation: npulse 1s infinite;
-    }
-    .pipeline-step.step-done { color: #10b981; font-weight: 600; }
-    .pipeline-step.step-done .step-dot {
-      border-color: #10b981; background: #10b981; color: #fff;
-    }
-
-    /* Resume drop zone */
-    #resume-drop-zone {
-      border: 2px dashed rgba(78,115,223,.28); border-radius: .75rem;
-      padding: .9rem; text-align: center; cursor: pointer;
-      transition: background .15s, border-color .15s;
-      font-size: .83rem; color: var(--text-muted);
-    }
-    #resume-drop-zone:hover, #resume-drop-zone.drag-over {
-      background: rgba(78,115,223,.05); border-color: var(--brand-primary);
-    }
-
     /* Example prompt chips */
     .tip-chip {
       display: inline-block;
@@ -262,8 +211,45 @@
     }
     .tip-chip:hover { background: rgba(78,115,223,.16); transform: translateY(-1px); }
 
+    /* ── Graph styles ────────────────────────────────────────────────────── */
+    .graph-wrap { overflow-x: auto; }
+    .graph-wrap svg { min-width: 620px; }
+
+    .gnode rect {
+      stroke: #d1d5db; stroke-width: 1.5; fill: #fff;
+      rx: 8; transition: stroke .25s, fill .25s, filter .25s;
+    }
+    .gnode text {
+      font-family: "Plus Jakarta Sans", sans-serif;
+      font-size: 11px; fill: #374151; font-weight: 600;
+      pointer-events: none;
+    }
+    .gnode-intent rect { stroke: #c4b5fd; fill: rgba(196,181,253,.1); }
+    .gnode-intent text { fill: #7c3aed; }
+    .gnode-hitl rect  { stroke: #f59e0b; fill: #fffbeb; }
+    .gnode-hitl text  { fill: #92400e; }
+    .gnode-output rect { stroke: #10b981; fill: rgba(16,185,129,.08); }
+    .gnode-output text { fill: #047857; }
+    .gnode-entry rect  { stroke: var(--brand-primary); stroke-width: 2; fill: rgba(78,115,223,.07); }
+    .gnode-entry text  { fill: var(--brand-primary); font-weight: 700; }
+
+    .gnode-active rect {
+      stroke: var(--brand-primary); stroke-width: 2.5; fill: rgba(78,115,223,.13);
+      filter: drop-shadow(0 0 5px rgba(78,115,223,.35));
+    }
+    .gnode-active text { fill: var(--brand-primary); }
+    .gnode-done rect   { stroke: #10b981; stroke-width: 2; fill: rgba(16,185,129,.1); }
+    .gnode-done text   { fill: #047857; }
+
+    .graph-edge { stroke: #d1d5db; stroke-width: 1.4; fill: none; }
+    .graph-edge-dashed { stroke: #d1d5db; stroke-width: 1.4; fill: none; stroke-dasharray: 5,3; }
+
+    .graph-legend-dot {
+      display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px;
+    }
+
     @media (max-width: 992px) {
-      #messages { max-height: 42vh; }
+      #messages { max-height: 45vh; }
     }
   </style>
 </head>
@@ -307,27 +293,25 @@
     <div class="container px-4 px-md-5">
       <div class="page-wrap">
         <div class="soft-card p-4 p-md-5">
-          <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap mb-4">
-            <div>
-              <h1 class="h3 fw-bolder mb-1">
-                <span class="text-gradient">Job Market Intelligence</span>
-                <span class="ms-2 badge rounded-pill" style="background:rgba(16,185,129,.15);color:#047857;font-size:.6rem;vertical-align:middle;">Live Demo</span>
-              </h1>
-              <p class="mb-0 text-muted" style="font-size:.93rem;">
-                A LangGraph agentic system with real SerpAPI job data, structured LLM analysis,
-                and human-in-the-loop confirmation — streaming live via SSE.
-              </p>
-            </div>
-            <a class="btn btn-back" href="project-job-market-analysis.html">
-              <i class="bi bi-arrow-left me-1"></i>About this project
-            </a>
+          <div class="mb-4">
+            <h1 class="h3 fw-bolder mb-2">
+              <span class="text-gradient">Job Market Intelligence</span>
+              <span class="ms-2 badge rounded-pill" style="background:rgba(16,185,129,.15);color:#047857;font-size:.6rem;vertical-align:middle;">Live Demo</span>
+            </h1>
+            <p class="mb-0 text-muted" style="font-size:.95rem; max-width:720px; line-height:1.7;">
+              An agentic AI system built with LangGraph that analyses real job market data from Google Jobs via SerpAPI.
+              Ask about any role and country — it classifies your intent, confirms search parameters with you
+              (human-in-the-loop), collects live job postings, extracts skill requirements with GPT-4o-mini,
+              and synthesises a structured market analysis or personalised resume gap report — all streamed live
+              via Server-Sent Events.
+            </p>
           </div>
 
           <div class="row g-2">
             <div class="col-sm-4">
               <div class="p-2 rounded-3 h-100" style="background:rgba(78,115,223,.06);">
                 <div class="fw-bolder small mb-1"><i class="bi bi-robot me-1"></i>4 Intents</div>
-                <div class="text-muted" style="font-size:.77rem;">General Q&A · Focused market question · Full analysis · Resume gap review</div>
+                <div class="text-muted" style="font-size:.77rem;">General Q&amp;A · Focused market question · Full analysis · Resume gap review</div>
               </div>
             </div>
             <div class="col-sm-4">
@@ -348,19 +332,195 @@
     </div>
   </header>
 
-  <!-- ── Chat application ──────────────────────────────────────────────── -->
-  <section class="pb-5">
+  <!-- ── How it works — LangGraph visualisation ────────────────────────── -->
+  <section class="pb-3">
     <div class="container px-4 px-md-5">
       <div class="page-wrap">
-        <div class="row gx-4">
-
-          <!-- ── Left: Chat panel ────────────────────────────────────────── -->
-          <div class="col-lg-8 mb-4">
-
-            <!-- Messages -->
-            <div class="soft-card mb-3">
-              <div id="messages"></div>
+        <div class="soft-card p-4">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h6 class="fw-bolder mb-0 text-muted" style="text-transform:uppercase;letter-spacing:.5px;font-size:.78rem;">
+              <i class="bi bi-diagram-3 me-1"></i>How it works — LangGraph
+            </h6>
+            <!-- Legend -->
+            <div class="d-flex gap-3 flex-wrap" style="font-size:.74rem; font-weight:600; color:#6c757d;">
+              <span><span class="graph-legend-dot" style="background:rgba(78,115,223,.15);border:1.5px solid var(--brand-primary);"></span>Processing</span>
+              <span><span class="graph-legend-dot" style="background:rgba(196,181,253,.1);border:1.5px solid #c4b5fd;"></span>Intent branch</span>
+              <span><span class="graph-legend-dot" style="background:#fffbeb;border:1.5px solid #f59e0b;"></span>HITL pause</span>
+              <span><span class="graph-legend-dot" style="background:rgba(16,185,129,.08);border:1.5px solid #10b981;"></span>Output</span>
             </div>
+          </div>
+
+          <div class="graph-wrap">
+            <svg viewBox="0 0 860 586" width="100%" style="max-height:560px;" aria-label="LangGraph execution graph">
+              <defs>
+                <marker id="arrowhead" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L7,3 z" fill="#c4c9d4"/>
+                </marker>
+              </defs>
+
+              <!-- ── Edges ────────────────────────────────────────────── -->
+
+              <!-- intent_resolver → 4 branches -->
+              <path class="graph-edge" d="M430,46 C 430,68 70,80 70,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,46 C 430,68 240,80 240,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,46 C 430,68 420,80 420,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,46 C 430,68 600,80 600,102" marker-end="url(#arrowhead)"/>
+
+              <!-- general_question → respond (left bypass, dashed) -->
+              <path class="graph-edge-dashed" d="M70,134 C 20,280 20,510 430,542" marker-end="url(#arrowhead)"/>
+
+              <!-- focused_question → cache_lookup -->
+              <path class="graph-edge" d="M240,134 C 240,158 320,163 320,190" marker-end="url(#arrowhead)"/>
+              <!-- full_market_analysis → cache_lookup -->
+              <path class="graph-edge" d="M420,134 C 420,158 320,163 320,190" marker-end="url(#arrowhead)"/>
+              <!-- resume_analysis → check_resume -->
+              <path class="graph-edge" d="M600,134 C 600,158 682,163 682,190" marker-end="url(#arrowhead)"/>
+
+              <!-- check_resume → resume_parser (has resume) -->
+              <path class="graph-edge" d="M682,222 L 677,278" marker-end="url(#arrowhead)"/>
+              <!-- check_resume → respond (no resume, dashed) -->
+              <path class="graph-edge-dashed" d="M682,222 C 840,280 840,510 430,542" marker-end="url(#arrowhead)"/>
+
+              <!-- resume_parser → cache_lookup (outer right arc) -->
+              <path class="graph-edge" d="M677,310 C 840,350 840,160 385,206" marker-end="url(#arrowhead)"/>
+
+              <!-- cache_lookup → confirm_search_params (miss) -->
+              <path class="graph-edge" d="M320,222 C 320,248 157,253 157,278" marker-end="url(#arrowhead)"/>
+              <!-- cache_lookup → market_analyzer (hit, skip row 3, dashed) -->
+              <path class="graph-edge-dashed" d="M320,222 C 380,252 420,295 405,366" marker-end="url(#arrowhead)"/>
+
+              <!-- confirm_search_params → job_collector -->
+              <path class="graph-edge" d="M235,294 L 275,294" marker-end="url(#arrowhead)"/>
+              <!-- job_collector → requirements_extractor -->
+              <path class="graph-edge" d="M385,294 L 420,294" marker-end="url(#arrowhead)"/>
+              <!-- requirements_extractor → market_analyzer -->
+              <path class="graph-edge" d="M500,310 C 500,340 405,345 405,366" marker-end="url(#arrowhead)"/>
+
+              <!-- market_analyzer → answer_focused -->
+              <path class="graph-edge" d="M405,398 C 350,430 120,438 120,454" marker-end="url(#arrowhead)"/>
+              <!-- market_analyzer → skill_gap_analyzer -->
+              <path class="graph-edge" d="M405,398 C 398,428 317,440 317,454" marker-end="url(#arrowhead)"/>
+              <!-- market_analyzer → confirm_report_format -->
+              <path class="graph-edge" d="M405,398 C 418,428 527,440 527,454" marker-end="url(#arrowhead)"/>
+
+              <!-- skill_gap_analyzer → confirm_report_format -->
+              <path class="graph-edge" d="M395,470 L 450,470" marker-end="url(#arrowhead)"/>
+              <!-- confirm_report_format → html_report_generator -->
+              <path class="graph-edge" d="M605,470 L 660,470" marker-end="url(#arrowhead)"/>
+
+              <!-- confirm_report_format → respond (option B, dashed) -->
+              <path class="graph-edge-dashed" d="M527,486 C 527,516 430,520 430,542" marker-end="url(#arrowhead)"/>
+              <!-- html_report_generator → respond -->
+              <path class="graph-edge" d="M720,486 C 720,524 430,530 430,542" marker-end="url(#arrowhead)"/>
+              <!-- answer_focused → respond -->
+              <path class="graph-edge" d="M120,486 C 120,524 430,530 430,542" marker-end="url(#arrowhead)"/>
+
+              <!-- ── Nodes ────────────────────────────────────────────── -->
+
+              <!-- Row 0: Entry -->
+              <g class="gnode gnode-entry" id="gnode-intent_resolver">
+                <rect x="340" y="14" width="180" height="32" rx="8"/>
+                <text x="430" y="34" text-anchor="middle">Intent Resolver</text>
+              </g>
+
+              <!-- Row 1: Intent branches -->
+              <g class="gnode gnode-intent">
+                <rect x="10" y="102" width="120" height="32" rx="8"/>
+                <text x="70" y="122" text-anchor="middle">General Q&amp;A</text>
+              </g>
+              <g class="gnode gnode-intent">
+                <rect x="170" y="102" width="140" height="32" rx="8"/>
+                <text x="240" y="122" text-anchor="middle">Focused Question</text>
+              </g>
+              <g class="gnode gnode-intent">
+                <rect x="355" y="102" width="130" height="32" rx="8"/>
+                <text x="420" y="122" text-anchor="middle">Full Analysis</text>
+              </g>
+              <g class="gnode gnode-intent">
+                <rect x="530" y="102" width="140" height="32" rx="8"/>
+                <text x="600" y="122" text-anchor="middle">Resume Analysis</text>
+              </g>
+
+              <!-- Row 2: Cache + Check Resume -->
+              <g class="gnode" id="gnode-cache_lookup">
+                <rect x="255" y="190" width="130" height="32" rx="8"/>
+                <text x="320" y="210" text-anchor="middle">Cache Lookup</text>
+              </g>
+              <g class="gnode" id="gnode-check_resume">
+                <rect x="620" y="190" width="125" height="32" rx="8"/>
+                <text x="682" y="210" text-anchor="middle">Check Resume</text>
+              </g>
+
+              <!-- Row 3: HITL + Collect + Extract + Parse -->
+              <g class="gnode gnode-hitl" id="gnode-confirm_search_params">
+                <rect x="80" y="278" width="155" height="32" rx="8"/>
+                <text x="157" y="298" text-anchor="middle">Confirm Search ⏸</text>
+              </g>
+              <g class="gnode" id="gnode-job_collector">
+                <rect x="275" y="278" width="110" height="32" rx="8"/>
+                <text x="330" y="298" text-anchor="middle">Collect Jobs</text>
+              </g>
+              <g class="gnode" id="gnode-requirements_extractor">
+                <rect x="420" y="278" width="160" height="32" rx="8"/>
+                <text x="500" y="298" text-anchor="middle">Extract Requirements</text>
+              </g>
+              <g class="gnode" id="gnode-resume_parser">
+                <rect x="620" y="278" width="115" height="32" rx="8"/>
+                <text x="677" y="298" text-anchor="middle">Parse Resume</text>
+              </g>
+
+              <!-- Row 4: Market Analyzer -->
+              <g class="gnode" id="gnode-market_analyzer">
+                <rect x="330" y="366" width="150" height="32" rx="8"/>
+                <text x="405" y="386" text-anchor="middle">Market Analyzer</text>
+              </g>
+
+              <!-- Row 5: Output paths -->
+              <g class="gnode" id="gnode-answer_focused">
+                <rect x="55" y="454" width="130" height="32" rx="8"/>
+                <text x="120" y="474" text-anchor="middle">Answer Focused</text>
+              </g>
+              <g class="gnode" id="gnode-skill_gap_analyzer">
+                <rect x="240" y="454" width="155" height="32" rx="8"/>
+                <text x="317" y="474" text-anchor="middle">Skill Gap Analysis</text>
+              </g>
+              <g class="gnode gnode-hitl" id="gnode-confirm_report_format">
+                <rect x="450" y="454" width="155" height="32" rx="8"/>
+                <text x="527" y="474" text-anchor="middle">Confirm Format ⏸</text>
+              </g>
+              <g class="gnode" id="gnode-html_report_generator">
+                <rect x="660" y="454" width="120" height="32" rx="8"/>
+                <text x="720" y="474" text-anchor="middle">HTML Report</text>
+              </g>
+
+              <!-- Row 6: Respond -->
+              <g class="gnode gnode-output" id="gnode-respond">
+                <rect x="375" y="542" width="110" height="32" rx="8"/>
+                <text x="430" y="562" text-anchor="middle">Respond</text>
+              </g>
+
+            </svg>
+          </div>
+          <p class="text-muted mt-2 mb-0" style="font-size:.74rem;">
+            Dashed arrows = optional paths (cache hit / no resume / text-only report). Nodes highlight live as your query runs.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Unified chat panel ────────────────────────────────────────────── -->
+  <section class="pb-4">
+    <div class="container px-4 px-md-5">
+      <div class="page-wrap">
+
+        <div class="soft-card">
+
+          <!-- Messages -->
+          <div id="messages"></div>
+
+          <!-- Input section (inside card, below messages) -->
+          <div id="input-section">
 
             <!-- Active node indicator -->
             <div id="node-indicator-wrap" class="mb-2 d-none">
@@ -370,14 +530,13 @@
               </span>
             </div>
 
-            <!-- HITL interrupt card (hidden until interrupt fires) -->
+            <!-- HITL interrupt card -->
             <div id="interrupt-card" class="mb-3 d-none">
               <div class="hitl-header">
                 <i class="bi bi-pause-circle-fill text-warning"></i>
                 Action required before proceeding
               </div>
               <div id="interrupt-prompt"></div>
-              <!-- Free-text reply (for confirm_search_params) -->
               <div id="hitl-text-wrap" class="d-flex gap-2 d-none">
                 <input id="interrupt-input" class="form-control rounded-3" style="font-size:.9rem;"
                        placeholder="Type 'confirm' to proceed, or describe what to change…" />
@@ -385,7 +544,6 @@
                   Send <i class="bi bi-send-fill ms-1"></i>
                 </button>
               </div>
-              <!-- A / B buttons (for confirm_report_format) -->
               <div id="hitl-ab-wrap" class="d-flex gap-2 flex-wrap d-none">
                 <button class="btn btn-primary btn-solid" onclick="sendHitlReply('A')">
                   <i class="bi bi-file-earmark-richtext me-1"></i>A — Full HTML Report
@@ -396,74 +554,49 @@
               </div>
             </div>
 
-            <!-- Main input -->
-            <div id="input-area">
-              <div class="d-flex gap-2">
-                <input id="message-input" type="text" class="form-control form-control-lg"
-                       placeholder="Ask about job trends, request a full market analysis, or upload a resume for a gap review…"
-                       autocomplete="off" />
-                <button id="send-btn" onclick="handleSend()" aria-label="Send">
-                  <i class="bi bi-send-fill"></i>
-                </button>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mt-2 px-1">
+            <!-- Input row: text + attach + send -->
+            <div class="d-flex gap-2 mb-2">
+              <input id="message-input" type="text" class="form-control form-control-lg"
+                     placeholder="Ask about job trends, request a market analysis, or upload your resume for a gap review…"
+                     autocomplete="off" />
+              <button id="attach-btn" onclick="document.getElementById('resume-file-input').click()"
+                      title="Upload resume PDF (required for resume gap analysis)" aria-label="Attach resume">
+                <i class="bi bi-paperclip"></i>
+              </button>
+              <button id="send-btn" onclick="handleSend()" aria-label="Send">
+                <i class="bi bi-send-fill"></i>
+              </button>
+            </div>
+            <input id="resume-file-input" type="file" accept=".pdf" class="d-none"
+                   onchange="handleResumeFile(this.files[0])">
+
+            <!-- Hint bar -->
+            <div class="d-flex justify-content-between align-items-center px-1">
+              <div class="d-flex align-items-center gap-2 flex-wrap">
                 <span class="text-muted" style="font-size:.74rem;">
                   <i class="bi bi-keyboard me-1"></i>Press <kbd>Enter</kbd> to send
                 </span>
-                <button class="btn btn-sm text-muted p-0" style="font-size:.74rem;" onclick="clearSession()">
-                  <i class="bi bi-arrow-counterclockwise me-1"></i>New session
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- ── Right: Sidebar ──────────────────────────────────────────── -->
-          <div class="col-lg-4">
-
-            <!-- Session -->
-            <div class="sidebar-card">
-              <div class="sidebar-title"><i class="bi bi-key me-1"></i>Session</div>
-              <div class="d-flex align-items-center gap-2 flex-wrap">
-                <code id="session-badge"
-                      style="color:var(--brand-primary);background:rgba(78,115,223,.09);padding:2px 8px;border-radius:6px;font-size:.77rem;"></code>
                 <span id="resume-status" class="d-none"
                       style="background:rgba(16,185,129,.13);color:#047857;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;">
                   <i class="bi bi-file-earmark-check me-1"></i>Resume uploaded
                 </span>
+                <div id="resume-upload-result" class="d-none"></div>
               </div>
-            </div>
-
-            <!-- Resume upload -->
-            <div class="sidebar-card">
-              <div class="sidebar-title"><i class="bi bi-file-earmark-person me-1"></i>Resume Upload</div>
-              <div id="resume-drop-zone"
-                   onclick="document.getElementById('resume-file-input').click()"
-                   ondragover="event.preventDefault();this.classList.add('drag-over')"
-                   ondragleave="this.classList.remove('drag-over')"
-                   ondrop="handleResumeDrop(event)">
-                <i class="bi bi-upload mb-1 d-block" style="font-size:1.4rem;color:var(--brand-primary);"></i>
-                <div class="fw-bolder small">Drop PDF here or click to upload</div>
-                <div style="font-size:.74rem;">Required only for resume gap analysis</div>
-              </div>
-              <input id="resume-file-input" type="file" accept=".pdf" class="d-none"
-                     onchange="handleResumeFile(this.files[0])">
-              <div id="resume-upload-result" class="mt-2 d-none"></div>
-            </div>
-
-            <!-- Pipeline -->
-            <div class="sidebar-card">
-              <div class="sidebar-title"><i class="bi bi-diagram-3 me-1"></i>Pipeline</div>
-              <div id="pipeline-steps"></div>
-            </div>
-
-            <!-- Tips -->
-            <div class="sidebar-card">
-              <div class="sidebar-title"><i class="bi bi-lightbulb me-1"></i>Try asking…</div>
-              <div id="tips-container"></div>
+              <button class="btn btn-sm text-muted p-0" style="font-size:.74rem;" onclick="clearSession()">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>New session
+              </button>
             </div>
 
           </div>
         </div>
+
+        <!-- Back to Projects button -->
+        <div class="mt-3">
+          <a class="btn btn-back" href="projects.html">
+            <i class="bi bi-arrow-left me-1"></i>Back to Projects Page
+          </a>
+        </div>
+
       </div>
     </div>
   </section>
@@ -481,14 +614,11 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Marked.js — lightweight markdown renderer for AI responses -->
 <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════════════════
    CONFIGURATION
-   Change API_BASE to point at the fly.io deployment once deployed.
-   For local testing, set to 'http://localhost:8000'.
 ═══════════════════════════════════════════════════════════════════════════ */
 const API_BASE = 'https://job-market-intelligence-system.fly.dev';
 
@@ -521,18 +651,17 @@ const TIPS = [
 ═══════════════════════════════════════════════════════════════════════════ */
 let sessionId         = null;
 let isStreaming        = false;
-let currentBubble     = null;   // .bubble-content div receiving tokens
-let currentBubbleRaw  = '';     // accumulated raw markdown
-let lastActiveNode    = null;   // last node_start node id
+let currentBubble     = null;
+let currentBubbleRaw  = '';
+let lastActiveNode    = null;
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BOOT
 ═══════════════════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
   initSession();
-  renderPipeline();
-  renderTips();
   renderWelcome();
+  renderTips();
 
   document.getElementById('message-input').addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
@@ -549,7 +678,6 @@ function initSession() {
     sessionId = crypto.randomUUID();
     localStorage.setItem('jmis_session', sessionId);
   }
-  document.getElementById('session-badge').textContent = sessionId.slice(0, 8) + '…';
 }
 
 function clearSession() {
@@ -558,40 +686,38 @@ function clearSession() {
   location.reload();
 }
 
-/* ─── Static renders ─────────────────────────────────────────────────────── */
-function renderPipeline() {
-  document.getElementById('pipeline-steps').innerHTML = PIPELINE_NODES.map(n => `
-    <div class="pipeline-step" id="step-${n.id}">
-      <div class="step-dot"></div>
-      <span>${n.label}</span>
-    </div>
-  `).join('');
-}
-
-function renderTips() {
-  document.getElementById('tips-container').innerHTML = TIPS.map(t => `
-    <span class="tip-chip" onclick="useTip(this.dataset.prompt)" data-prompt="${esc(t)}">${esc(t)}</span>
-  `).join('');
-}
-
-function useTip(text) {
-  if (isStreaming) return;
-  // Strip parenthetical notes like "(upload resume first)"
-  const clean = text.replace(/\s*\(.*?\)/g, '').trim();
-  const input = document.getElementById('message-input');
-  input.value = clean;
-  input.focus();
-}
-
+/* ─── Welcome + Tips ─────────────────────────────────────────────────────── */
 function renderWelcome() {
   addAiBubble(`**Welcome!** Here's what I can do:
 
 - **Market analysis** — full job market breakdown for any role and country
 - **Focused questions** — cloud platforms, certifications, frameworks, etc.
-- **Resume gap review** — upload your resume in the sidebar, then ask what you're missing
+- **Resume gap review** — click the 📎 button to upload your resume, then ask what you're missing
 - **General questions** — tool comparisons, career advice, anything AI/ML-related
 
 *For market analysis I'll ask you to confirm search parameters before calling the API.*`);
+}
+
+function renderTips() {
+  const msgs = document.getElementById('messages');
+  const wrapper = document.createElement('div');
+  wrapper.id = 'tips-wrapper';
+  wrapper.style.cssText = 'padding:.4rem 1.1rem 1rem;';
+  wrapper.innerHTML = `
+    <div class="text-muted fw-bold mb-2" style="font-size:.75rem;opacity:.75;">
+      <i class="bi bi-lightbulb me-1"></i>Try asking…
+    </div>
+    <div>${TIPS.map(t => `<span class="tip-chip" onclick="useTip(this.dataset.prompt)" data-prompt="${esc(t)}">${esc(t)}</span>`).join('')}</div>
+  `;
+  msgs.appendChild(wrapper);
+}
+
+function useTip(text) {
+  if (isStreaming) return;
+  const clean = text.replace(/\s*\(.*?\)/g, '').trim();
+  const input = document.getElementById('message-input');
+  input.value = clean;
+  input.focus();
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -602,6 +728,10 @@ async function handleSend() {
   const text  = input.value.trim();
   if (!text || isStreaming) return;
   input.value = '';
+
+  // Hide tips on first send
+  const tipsWrapper = document.getElementById('tips-wrapper');
+  if (tipsWrapper) tipsWrapper.style.display = 'none';
 
   setStreaming(true);
   resetPipeline();
@@ -651,7 +781,6 @@ async function sendHitlReply(fixed = null) {
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SSE STREAM READER
-   Uses Fetch + ReadableStream because EventSource only supports GET.
 ═══════════════════════════════════════════════════════════════════════════ */
 async function readSSE(response) {
   const reader  = response.body.getReader();
@@ -662,8 +791,8 @@ async function readSSE(response) {
     const { done, value } = await reader.read();
 
     if (done) {
-      buffer += decoder.decode();  // flush TextDecoder's internal byte buffer
-      buffer += '\n\n';            // ensure any trailing incomplete event is delimited
+      buffer += decoder.decode();
+      buffer += '\n\n';
     } else {
       buffer += decoder.decode(value, { stream: true });
     }
@@ -672,7 +801,7 @@ async function readSSE(response) {
     buffer = parts.pop();
 
     for (const part of parts) {
-      if (!part.trim() || part.startsWith(':')) continue; // skip comments/pings
+      if (!part.trim() || part.startsWith(':')) continue;
       const lines = part.trim().split('\n');
       let evType = '', evData = '';
       for (const line of lines) {
@@ -684,7 +813,7 @@ async function readSSE(response) {
       }
     }
 
-    if (done) break;  // exit only after processing remaining buffer
+    if (done) break;
   }
 }
 
@@ -704,13 +833,10 @@ function handleEvent(type, data) {
     case 'interrupt':
       if (lastActiveNode) setNodeDone(lastActiveNode);
       hideNodeIndicator();
-      finalizeAiBubble(false); // empty bubble — remove it
-      // Sync session_id returned by server (may differ if backend reset a stuck session)
+      finalizeAiBubble(false);
       if (data.session_id && data.session_id !== sessionId) {
         sessionId = data.session_id;
         localStorage.setItem('jmis_session', sessionId);
-        const badge = document.getElementById('session-badge');
-        if (badge) badge.textContent = sessionId.slice(0, 8) + '…';
       }
       showInterrupt(data.prompt);
       setStreaming(false);
@@ -722,13 +848,9 @@ function handleEvent(type, data) {
       finalizeAiBubble(true);
       if (data.html_report_path) addReportLink(data.html_report_path);
       if (data.cache_hit)        addCacheBadge();
-      // Sync session_id in case the backend started a fresh session
-      // (e.g. previous session was stuck at a HITL interrupt).
       if (data.session_id && data.session_id !== sessionId) {
         sessionId = data.session_id;
         localStorage.setItem('jmis_session', sessionId);
-        const badge = document.getElementById('session-badge');
-        if (badge) badge.textContent = sessionId.slice(0, 8) + '…';
       }
       setStreaming(false);
       break;
@@ -756,7 +878,6 @@ function addHumanBubble(text) {
 }
 
 function addAiBubble(markdown) {
-  // Static AI bubble (used for welcome message)
   const msgs = document.getElementById('messages');
   const div  = document.createElement('div');
   div.className = 'msg-ai';
@@ -789,13 +910,11 @@ function appendToken(content) {
   if (!currentBubble) return;
   currentBubbleRaw += content;
 
-  // Hide typing dots on first token
   const dots = currentBubble.closest('.bubble')?.querySelector('.typing-dots');
   if (dots && dots.style.display !== 'none') {
     dots.style.display = 'none';
     currentBubble.style.display = '';
   }
-  // Show raw text while streaming (fast path — no markdown overhead)
   currentBubble.textContent = currentBubbleRaw;
   scrollDown();
 }
@@ -885,21 +1004,22 @@ function hideInterrupt() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
-   PIPELINE PROGRESS
+   PIPELINE + GRAPH PROGRESS
 ═══════════════════════════════════════════════════════════════════════════ */
 function resetPipeline() {
   lastActiveNode = null;
   PIPELINE_NODES.forEach(n => {
-    const el = document.getElementById(`step-${n.id}`);
-    if (el) { el.className = 'pipeline-step'; el.querySelector('.step-dot').textContent = ''; }
+    const gn = document.getElementById(`gnode-${n.id}`);
+    if (gn) gn.classList.remove('gnode-active', 'gnode-done');
   });
 }
 
 function setNodeActive(id) {
   if (lastActiveNode && lastActiveNode !== id) setNodeDone(lastActiveNode);
   lastActiveNode = id;
-  const el = document.getElementById(`step-${id}`);
-  if (el) el.className = 'pipeline-step step-active';
+
+  const gn = document.getElementById(`gnode-${id}`);
+  if (gn) { gn.classList.remove('gnode-done'); gn.classList.add('gnode-active'); }
 
   const label = PIPELINE_NODES.find(n => n.id === id)?.label || id;
   document.getElementById('node-label').textContent = label;
@@ -908,10 +1028,8 @@ function setNodeActive(id) {
 
 function setNodeDone(id) {
   if (!id) return;
-  const el = document.getElementById(`step-${id}`);
-  if (!el) return;
-  el.className = 'pipeline-step step-done';
-  el.querySelector('.step-dot').textContent = '✓';
+  const gn = document.getElementById(`gnode-${id}`);
+  if (gn) { gn.classList.remove('gnode-active'); gn.classList.add('gnode-done'); }
 }
 
 function hideNodeIndicator() {
@@ -921,13 +1039,6 @@ function hideNodeIndicator() {
 /* ═══════════════════════════════════════════════════════════════════════════
    RESUME UPLOAD
 ═══════════════════════════════════════════════════════════════════════════ */
-function handleResumeDrop(e) {
-  e.preventDefault();
-  document.getElementById('resume-drop-zone').classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) handleResumeFile(file);
-}
-
 async function handleResumeFile(file) {
   if (!file) return;
   if (!file.name.toLowerCase().endsWith('.pdf')) {
@@ -946,7 +1057,7 @@ async function handleResumeFile(file) {
   try {
     const res = await fetch(`${API_BASE}/api/chat/${sessionId}/resume`, { method: 'POST', body });
     if (!res.ok) throw new Error((await res.json()).detail || `HTTP ${res.status}`);
-    showUploadStatus('success', `${file.name} — uploaded ✓`);
+    showUploadStatus('success', `${file.name} uploaded`);
     document.getElementById('resume-status').classList.remove('d-none');
   } catch (e) {
     showUploadStatus('error', e.message);
