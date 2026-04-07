@@ -160,6 +160,16 @@
       white-space: pre-wrap; line-height: 1.55;
       margin-bottom: .8rem;
     }
+    .hitl-divider {
+      font-size: .75rem; color: #9ca3af; text-align: center;
+      margin: .6rem 0 .2rem; position: relative;
+    }
+    .hitl-divider::before, .hitl-divider::after {
+      content: ''; position: absolute; top: 50%; width: 40%; height: 1px;
+      background: #e5e7eb;
+    }
+    .hitl-divider::before { left: 0; }
+    .hitl-divider::after  { right: 0; }
 
     /* ── Input area ──────────────────────────────────────────────────────── */
     #input-section {
@@ -199,6 +209,11 @@
       animation: npulse 1s infinite;
     }
     @keyframes npulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+    .node-step-counter { font-size:.7rem; opacity:.55; font-weight:400; }
+    #node-status-msg {
+      font-size: .8rem; color: #6b7280; font-style: italic;
+      padding: .25rem .6rem; margin: .15rem 0 .4rem;
+    }
 
     /* Example prompt chips */
     .tip-chip {
@@ -360,13 +375,16 @@
 
               <!-- ── Edges ────────────────────────────────────────────── -->
 
-              <!-- intent_resolver → 4 branches -->
-              <path class="graph-edge" d="M430,46 C 430,68 70,80 70,102" marker-end="url(#arrowhead)"/>
-              <path class="graph-edge" d="M430,46 C 430,68 240,80 240,102" marker-end="url(#arrowhead)"/>
-              <path class="graph-edge" d="M430,46 C 430,68 420,80 420,102" marker-end="url(#arrowhead)"/>
-              <path class="graph-edge" d="M430,46 C 430,68 600,80 600,102" marker-end="url(#arrowhead)"/>
+              <!-- planner → task_dispatcher -->
+              <path class="graph-edge" d="M430,46 L 430,60" marker-end="url(#arrowhead)"/>
 
-              <!-- general_question → respond (left bypass, dashed) -->
+              <!-- task_dispatcher → 4 branches -->
+              <path class="graph-edge" d="M430,92 C 430,100 70,88 70,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,92 C 430,100 240,96 240,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,92 C 430,100 420,98 420,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,92 C 430,100 600,96 600,102" marker-end="url(#arrowhead)"/>
+
+              <!-- answer_general → respond (left bypass, dashed) -->
               <path class="graph-edge-dashed" d="M70,134 C 20,280 20,510 430,542" marker-end="url(#arrowhead)"/>
 
               <!-- focused_question → cache_lookup -->
@@ -417,16 +435,20 @@
 
               <!-- ── Nodes ────────────────────────────────────────────── -->
 
-              <!-- Row 0: Entry -->
-              <g class="gnode gnode-entry" id="gnode-intent_resolver">
+              <!-- Row 0: Entry — planner + task_dispatcher -->
+              <g class="gnode gnode-entry" id="gnode-planner">
                 <rect x="340" y="14" width="180" height="32" rx="8"/>
-                <text x="430" y="34" text-anchor="middle">Intent Resolver</text>
+                <text x="430" y="34" text-anchor="middle">Planner</text>
+              </g>
+              <g class="gnode" id="gnode-task_dispatcher">
+                <rect x="350" y="60" width="160" height="32" rx="8"/>
+                <text x="430" y="80" text-anchor="middle">Task Dispatcher</text>
               </g>
 
               <!-- Row 1: Intent branches -->
-              <g class="gnode gnode-intent">
+              <g class="gnode" id="gnode-answer_general">
                 <rect x="10" y="102" width="120" height="32" rx="8"/>
-                <text x="70" y="122" text-anchor="middle">General Q&amp;A</text>
+                <text x="70" y="122" text-anchor="middle">Answer General</text>
               </g>
               <g class="gnode gnode-intent">
                 <rect x="170" y="102" width="140" height="32" rx="8"/>
@@ -527,7 +549,9 @@
               <span id="node-indicator">
                 <span class="node-pulse"></span>
                 <span id="node-label">Processing…</span>
+                <span id="node-step" class="node-step-counter"></span>
               </span>
+              <div id="node-status-msg" class="d-none"></div>
             </div>
 
             <!-- HITL interrupt card -->
@@ -551,6 +575,21 @@
                 <button class="btn btn-outline-secondary btn-solid" onclick="sendHitlReply('B')">
                   <i class="bi bi-chat-text me-1"></i>B — Text Summary
                 </button>
+              </div>
+              <div id="hitl-confirm-wrap" class="d-none">
+                <button class="btn btn-success btn-solid fw-bolder" onclick="sendHitlReply('confirm')">
+                  <i class="bi bi-check-lg me-1"></i>Confirm — proceed with these parameters
+                </button>
+                <div class="hitl-divider">or type a correction below</div>
+                <div class="d-flex gap-2 mt-2">
+                  <input id="interrupt-input-confirm" class="form-control rounded-3" style="font-size:.9rem;"
+                         placeholder="e.g. use Germany, 20 posts…"
+                         onkeydown="if(event.key==='Enter') sendHitlReply(null, 'interrupt-input-confirm')" />
+                  <button class="btn btn-warning fw-bolder rounded-3 px-3"
+                          onclick="sendHitlReply(null, 'interrupt-input-confirm')">
+                    Send <i class="bi bi-send-fill ms-1"></i>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -623,19 +662,21 @@
 const API_BASE = 'https://job-market-intelligence-system.fly.dev';
 
 const PIPELINE_NODES = [
-  { id: 'intent_resolver',        label: 'Classifying intent' },
-  { id: 'check_resume',           label: 'Checking resume' },
-  { id: 'resume_parser',          label: 'Parsing resume' },
-  { id: 'cache_lookup',           label: 'Checking cache' },
-  { id: 'confirm_search_params',  label: 'Awaiting confirmation' },
-  { id: 'job_collector',          label: 'Collecting job postings' },
-  { id: 'requirements_extractor', label: 'Extracting requirements' },
-  { id: 'market_analyzer',        label: 'Analyzing market' },
-  { id: 'skill_gap_analyzer',     label: 'Analyzing skill gaps' },
-  { id: 'answer_focused',         label: 'Generating answer' },
-  { id: 'confirm_report_format',  label: 'Awaiting format choice' },
-  { id: 'html_report_generator',  label: 'Generating HTML report' },
-  { id: 'respond',                label: 'Composing response' },
+  { id: 'planner',               label: 'Planning tasks',          detail: 'Analysing your message and planning which steps to run...' },
+  { id: 'task_dispatcher',       label: 'Starting task',           detail: 'Dispatching the next task in the queue...' },
+  { id: 'answer_general',        label: 'Generating answer',       detail: 'Answering from AI knowledge — no live data needed...' },
+  { id: 'check_resume',          label: 'Checking resume',         detail: 'Checking if a resume PDF has been uploaded for this session...' },
+  { id: 'resume_parser',         label: 'Parsing resume',          detail: 'Extracting text from your resume PDF...' },
+  { id: 'cache_lookup',          label: 'Checking cache',          detail: 'Looking up previously collected market data for today...' },
+  { id: 'confirm_search_params', label: 'Awaiting confirmation',   detail: 'Waiting for your confirmation before making live API calls...' },
+  { id: 'job_collector',         label: 'Collecting job postings', detail: 'Fetching live job postings from Google Jobs via SerpAPI — typically 15–30s...' },
+  { id: 'requirements_extractor',label: 'Extracting requirements', detail: 'Extracting skills and certifications from each posting with GPT-4o-mini — typically 20–40s...' },
+  { id: 'market_analyzer',       label: 'Analysing market',        detail: 'Aggregating skill frequencies and writing the market analysis with GPT-4o...' },
+  { id: 'skill_gap_analyzer',    label: 'Analysing skill gaps',    detail: 'Comparing your resume against market demand with GPT-4o...' },
+  { id: 'answer_focused',        label: 'Generating answer',       detail: 'Composing a focused answer from the market data...' },
+  { id: 'confirm_report_format', label: 'Awaiting format choice',  detail: 'Waiting for your choice: HTML report or text summary...' },
+  { id: 'html_report_generator', label: 'Generating HTML report',  detail: 'Building a styled HTML report with GPT-4o — typically 15–30s...' },
+  { id: 'respond',               label: 'Composing response',      detail: 'Finalising and combining all answers...' },
 ];
 
 const TIPS = [
@@ -654,6 +695,7 @@ let isStreaming        = false;
 let currentBubble     = null;
 let currentBubbleRaw  = '';
 let lastActiveNode    = null;
+let nodeStepCount     = 0;
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BOOT
@@ -733,6 +775,7 @@ async function handleSend() {
   const tipsWrapper = document.getElementById('tips-wrapper');
   if (tipsWrapper) tipsWrapper.style.display = 'none';
 
+  nodeStepCount = 0;
   setStreaming(true);
   resetPipeline();
   addHumanBubble(text);
@@ -756,8 +799,8 @@ async function handleSend() {
 /* ═══════════════════════════════════════════════════════════════════════════
    SEND HITL REPLY
 ═══════════════════════════════════════════════════════════════════════════ */
-async function sendHitlReply(fixed = null) {
-  const reply = fixed ?? document.getElementById('interrupt-input').value.trim();
+async function sendHitlReply(fixed = null, inputId = 'interrupt-input') {
+  const reply = fixed ?? document.getElementById(inputId).value.trim();
   if (!reply) return;
   hideInterrupt();
   setStreaming(true);
@@ -999,12 +1042,17 @@ function showInterrupt(prompt) {
   // history remains readable after the yellow card is dismissed.
   addAiBubble(prompt);
 
-  const isAB = prompt.includes('Reply A or B');
+  const isAB      = prompt.includes('Reply A or B');
+  const isConfirm = prompt.includes('Reply **confirm**');
   document.getElementById('interrupt-prompt').textContent = prompt;
-  document.getElementById('hitl-text-wrap').classList.toggle('d-none',  isAB);
-  document.getElementById('hitl-ab-wrap').classList.toggle('d-none', !isAB);
+  document.getElementById('hitl-text-wrap').classList.toggle('d-none',    isAB || isConfirm);
+  document.getElementById('hitl-ab-wrap').classList.toggle('d-none',     !isAB);
+  document.getElementById('hitl-confirm-wrap').classList.toggle('d-none', !isConfirm);
   document.getElementById('interrupt-card').classList.remove('d-none');
-  if (!isAB) {
+  if (isConfirm) {
+    document.getElementById('interrupt-input-confirm').value = '';
+    document.getElementById('interrupt-input-confirm').focus();
+  } else if (!isAB) {
     document.getElementById('interrupt-input').value = '';
     document.getElementById('interrupt-input').focus();
   }
@@ -1013,6 +1061,7 @@ function showInterrupt(prompt) {
 
 function hideInterrupt() {
   document.getElementById('interrupt-card').classList.add('d-none');
+  document.getElementById('interrupt-input-confirm').value = '';
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1029,13 +1078,27 @@ function resetPipeline() {
 function setNodeActive(id) {
   if (lastActiveNode && lastActiveNode !== id) setNodeDone(lastActiveNode);
   lastActiveNode = id;
+  nodeStepCount++;
 
   const gn = document.getElementById(`gnode-${id}`);
   if (gn) { gn.classList.remove('gnode-done'); gn.classList.add('gnode-active'); }
 
-  const label = PIPELINE_NODES.find(n => n.id === id)?.label || id;
+  const node = PIPELINE_NODES.find(n => n.id === id);
+  const label = node?.label || id;
   document.getElementById('node-label').textContent = label;
+  document.getElementById('node-step').textContent = `· step ${nodeStepCount}`;
   document.getElementById('node-indicator-wrap').classList.remove('d-none');
+
+  // Show inline detail message for every node
+  const msg = document.getElementById('node-status-msg');
+  if (msg) {
+    if (node?.detail) {
+      msg.textContent = node.detail;
+      msg.classList.remove('d-none');
+    } else {
+      msg.classList.add('d-none');
+    }
+  }
 }
 
 function setNodeDone(id) {
@@ -1046,6 +1109,9 @@ function setNodeDone(id) {
 
 function hideNodeIndicator() {
   document.getElementById('node-indicator-wrap').classList.add('d-none');
+  document.getElementById('node-step').textContent = '';
+  const msg = document.getElementById('node-status-msg');
+  if (msg) msg.classList.add('d-none');
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
