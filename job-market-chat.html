@@ -995,6 +995,10 @@ function getLastBubbleContent() {
    HITL
 ═══════════════════════════════════════════════════════════════════════════ */
 function showInterrupt(prompt) {
+  // Persist the HITL question as a permanent AI bubble so the conversation
+  // history remains readable after the yellow card is dismissed.
+  addAiBubble(prompt);
+
   const isAB = prompt.includes('Reply A or B');
   document.getElementById('interrupt-prompt').textContent = prompt;
   document.getElementById('hitl-text-wrap').classList.toggle('d-none',  isAB);
