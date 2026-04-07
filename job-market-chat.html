@@ -178,6 +178,8 @@
     }
     #message-input {
       border: 1.5px solid rgba(36,48,65,.12); border-radius: .75rem; font-size: .94rem;
+      min-height: 52px; max-height: 160px;
+      resize: none; overflow-y: auto; line-height: 1.5;
     }
     #message-input:focus { border-color: var(--brand-primary); box-shadow: 0 0 0 3px rgba(78,115,223,.12); outline: none; }
     #send-btn {
@@ -608,9 +610,10 @@
 
             <!-- Input row: text + attach + send -->
             <div class="d-flex gap-2 mb-2">
-              <input id="message-input" type="text" class="form-control form-control-lg"
-                     placeholder="Ask about job trends, request a market analysis, or upload your resume for a gap review…"
-                     autocomplete="off" />
+              <textarea id="message-input" class="form-control form-control-lg"
+                        rows="1"
+                        placeholder="Ask about job trends, request a market analysis, or upload your resume for a gap review…"
+                        autocomplete="off"></textarea>
               <button id="attach-btn" onclick="document.getElementById('resume-file-input').click()"
                       title="Upload resume PDF (required for resume gap analysis)" aria-label="Attach resume">
                 <i class="bi bi-paperclip"></i>
@@ -722,6 +725,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('message-input').addEventListener('keydown', e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
   });
+  document.getElementById('message-input').addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 160) + 'px';
+  });
   document.getElementById('interrupt-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); sendHitlReply(); }
   });
@@ -819,7 +826,7 @@ async function sendHitlReply(fixed = null, inputId = 'interrupt-input') {
   hideInterrupt();
   setStreaming(true);
   addHumanBubble(reply);
-  startThinkingRow();
+  resumeThinking();
 
   try {
     const res = await fetch(`${API_BASE}/api/chat/${sessionId}/reply`, {
@@ -890,7 +897,7 @@ function handleEvent(type, data) {
 
     case 'interrupt':
       if (lastActiveNode) setNodeDone(lastActiveNode);
-      finishThinking();
+      pauseThinking();
       finalizeAiBubble(false);
       if (data.session_id && data.session_id !== sessionId) {
         sessionId = data.session_id;
@@ -1161,10 +1168,10 @@ function updateThinking(id) {
 function finishThinking() {
   if (!thinkingRow) return;
 
-  // Archive the last active step
+  // Archive the last active step (skip "Starting" and "Resuming" placeholders)
   const labelEl   = thinkingRow.querySelector('.thinking-current-label');
   const lastLabel = labelEl?.textContent.replace(/…$/, '').trim();
-  if (lastLabel && lastLabel !== 'Starting') {
+  if (lastLabel && lastLabel !== 'Starting' && lastLabel !== 'Resuming') {
     thinkingSteps.push(lastLabel);
     const item = document.createElement('div');
     item.className = 'thinking-done-step';
@@ -1174,18 +1181,57 @@ function finishThinking() {
 
   const total = thinkingSteps.length;
 
-  // Replace pulsing dot with a green "done" indicator
+  // Replace current indicator with green "done"
   thinkingRow.querySelector('.thinking-current').innerHTML = `
     <span class="thinking-dot" style="background:#10b981;animation:none;"></span>
-    <span style="color:#047857;font-weight:600;">${total} step${total !== 1 ? 's' : ''} completed</span>
+    <span style="color:#047857;font-weight:600;">${total > 0 ? `${total} step${total !== 1 ? 's' : ''} completed` : 'Done'}</span>
   `;
 
-  // Show / update the toggle
-  const toggle = thinkingRow.querySelector('.thinking-toggle');
-  toggle.classList.remove('d-none');
-  toggle.querySelector('.thinking-history-count').textContent = 'Show steps';
+  // Only show the history toggle if there are steps to show
+  if (total > 0) {
+    const toggle = thinkingRow.querySelector('.thinking-toggle');
+    toggle.classList.remove('d-none');
+    toggle.querySelector('.thinking-history-count').textContent = 'Show steps';
+  }
 
   thinkingRow = null;  // sealed — no more updates
+}
+
+function pauseThinking() {
+  if (!thinkingRow) return;
+  // Archive the current step label into history before pausing
+  const labelEl   = thinkingRow.querySelector('.thinking-current-label');
+  const curLabel  = labelEl?.textContent.replace(/…$/, '').trim();
+  if (curLabel && curLabel !== 'Starting' && curLabel !== 'Resuming') {
+    thinkingSteps.push(curLabel);
+    const item = document.createElement('div');
+    item.className = 'thinking-done-step';
+    item.innerHTML = `<i class="bi bi-check-circle-fill"></i>${esc(curLabel)}`;
+    thinkingRow.querySelector('.thinking-history-list').appendChild(item);
+    const toggle = thinkingRow.querySelector('.thinking-toggle');
+    toggle.classList.remove('d-none');
+    toggle.querySelector('.thinking-history-count').textContent =
+      `${thinkingSteps.length} step${thinkingSteps.length > 1 ? 's' : ''} completed`;
+  }
+  // Show amber "waiting" state — keep thinkingRow alive (not sealed)
+  thinkingRow.querySelector('.thinking-current').innerHTML = `
+    <span class="thinking-dot" style="background:#f59e0b;animation:none;"></span>
+    <span style="color:#92400e;font-weight:600;">Waiting for your response…</span>
+  `;
+}
+
+function resumeThinking() {
+  if (!thinkingRow) {
+    // Edge case: thinking row was lost (e.g. page reload between HITL turns)
+    startThinkingRow();
+    return;
+  }
+  // Reactivate the existing row with a fresh pulsing dot
+  thinkingRow.querySelector('.thinking-current').innerHTML = `
+    <span class="thinking-dot"></span>
+    <span class="thinking-current-label">Resuming…</span>
+  `;
+  scrollDown();
 }
 
 function toggleThinkingHistory(btn) {
