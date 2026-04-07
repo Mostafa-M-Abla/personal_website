@@ -904,6 +904,9 @@ function handleEvent(type, data) {
         localStorage.setItem('jmis_session', sessionId);
       }
       showInterrupt(data.prompt);
+      // Move thinking row to end so it sits below the prompt bubble, not above it
+      if (thinkingRow) document.getElementById('messages').appendChild(thinkingRow);
+      scrollDown();
       setStreaming(false);
       break;
 
@@ -1147,7 +1150,9 @@ function updateThinking(id) {
 
   // Archive the current step into the collapsible history
   const labelEl   = thinkingRow.querySelector('.thinking-current-label');
-  const prevLabel = labelEl.textContent.replace(/…$/, '').trim();
+  const rawPrev   = labelEl.textContent.replace(/…$/, '').trim();
+  // Strip "Step N — " prefix so history items show clean names
+  const prevLabel = rawPrev.replace(/^Step \d+ — /, '');
   if (prevLabel && prevLabel !== 'Starting') {
     thinkingSteps.push(prevLabel);
     const item = document.createElement('div');
@@ -1161,7 +1166,8 @@ function updateThinking(id) {
       `${thinkingSteps.length} step${thinkingSteps.length > 1 ? 's' : ''} completed`;
   }
 
-  labelEl.textContent = label + '…';
+  const stepNum = thinkingSteps.length + 1;
+  labelEl.textContent = `Step ${stepNum} — ${label}…`;
   scrollDown();
 }
 
@@ -1170,7 +1176,9 @@ function finishThinking() {
 
   // Archive the last active step (skip "Starting" and "Resuming" placeholders)
   const labelEl   = thinkingRow.querySelector('.thinking-current-label');
-  const lastLabel = labelEl?.textContent.replace(/…$/, '').trim();
+  const rawLast   = labelEl?.textContent.replace(/…$/, '').trim();
+  // Strip "Step N — " prefix so history items show clean names
+  const lastLabel = rawLast ? rawLast.replace(/^Step \d+ — /, '') : rawLast;
   if (lastLabel && lastLabel !== 'Starting' && lastLabel !== 'Resuming') {
     thinkingSteps.push(lastLabel);
     const item = document.createElement('div');
@@ -1194,14 +1202,19 @@ function finishThinking() {
     toggle.querySelector('.thinking-history-count').textContent = 'Show steps';
   }
 
+  // Move to end of messages so it sits below the AI response, not above it
+  document.getElementById('messages').appendChild(thinkingRow);
   thinkingRow = null;  // sealed — no more updates
+  scrollDown();
 }
 
 function pauseThinking() {
   if (!thinkingRow) return;
   // Archive the current step label into history before pausing
   const labelEl   = thinkingRow.querySelector('.thinking-current-label');
-  const curLabel  = labelEl?.textContent.replace(/…$/, '').trim();
+  const rawLabel  = labelEl?.textContent.replace(/…$/, '').trim();
+  // Strip "Step N — " prefix so history items show clean names
+  const curLabel  = rawLabel ? rawLabel.replace(/^Step \d+ — /, '') : rawLabel;
   if (curLabel && curLabel !== 'Starting' && curLabel !== 'Resuming') {
     thinkingSteps.push(curLabel);
     const item = document.createElement('div');
