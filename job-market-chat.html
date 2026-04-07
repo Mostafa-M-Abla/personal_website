@@ -845,7 +845,15 @@ function handleEvent(type, data) {
     case 'done':
       if (lastActiveNode) setNodeDone(lastActiveNode);
       hideNodeIndicator();
-      finalizeAiBubble(true);
+      if (!currentBubbleRaw.trim() && data.final_text_response) {
+        // No tokens streamed — discard empty bubble, render full response at once.
+        currentBubble?.closest('.msg-ai')?.remove();
+        currentBubble = null;
+        currentBubbleRaw = '';
+        addAiBubble(data.final_text_response);
+      } else {
+        finalizeAiBubble(true);
+      }
       if (data.html_report_path) addReportLink(data.html_report_path);
       if (data.cache_hit)        addCacheBadge();
       if (data.session_id && data.session_id !== sessionId) {
