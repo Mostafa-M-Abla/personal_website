@@ -698,6 +698,13 @@ function handleEvent(type, data) {
       if (lastActiveNode) setNodeDone(lastActiveNode);
       hideNodeIndicator();
       finalizeAiBubble(false); // empty bubble — remove it
+      // Sync session_id returned by server (may differ if backend reset a stuck session)
+      if (data.session_id && data.session_id !== sessionId) {
+        sessionId = data.session_id;
+        localStorage.setItem('jmis_session', sessionId);
+        const badge = document.getElementById('session-badge');
+        if (badge) badge.textContent = sessionId.slice(0, 8) + '…';
+      }
       showInterrupt(data.prompt);
       setStreaming(false);
       break;
@@ -708,6 +715,14 @@ function handleEvent(type, data) {
       finalizeAiBubble(true);
       if (data.html_report_path) addReportLink(data.html_report_path);
       if (data.cache_hit)        addCacheBadge();
+      // Sync session_id in case the backend started a fresh session
+      // (e.g. previous session was stuck at a HITL interrupt).
+      if (data.session_id && data.session_id !== sessionId) {
+        sessionId = data.session_id;
+        localStorage.setItem('jmis_session', sessionId);
+        const badge = document.getElementById('session-badge');
+        if (badge) badge.textContent = sessionId.slice(0, 8) + '…';
+      }
       setStreaming(false);
       break;
 
