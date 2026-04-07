@@ -660,8 +660,13 @@ async function readSSE(response) {
 
   while (true) {
     const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
+
+    if (done) {
+      buffer += decoder.decode();  // flush TextDecoder's internal byte buffer
+      buffer += '\n\n';            // ensure any trailing incomplete event is delimited
+    } else {
+      buffer += decoder.decode(value, { stream: true });
+    }
 
     const parts = buffer.split('\n\n');
     buffer = parts.pop();
@@ -678,6 +683,8 @@ async function readSSE(response) {
         try { handleEvent(evType, JSON.parse(evData)); } catch (_) {}
       }
     }
+
+    if (done) break;  // exit only after processing remaining buffer
   }
 }
 
