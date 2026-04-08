@@ -838,6 +838,7 @@ async function readSSE(response) {
       }
       if (evType && evData) {
         console.log('[SSE]', evType, evData);
+        document.getElementById('status-bar').textContent = '[' + evType + '] ' + evData.slice(0, 60);
         try { handleEvent(evType, JSON.parse(evData)); } catch (err) { console.error('[SSE] handleEvent error:', err); }
       }
     }
