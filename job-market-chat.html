@@ -670,7 +670,7 @@ const PIPELINE_NODES = [
 
 const TIPS = [
   'What are the top needed skills for an AI Engineer position in USA?',
-  'Attached is my Resume, which skills do I need to learn next to better suit AI Engineer positions in Egypt?',
+  'Attached is my Resume, which skills do I need to learn next to better suit AI Engineer psoitions in Egypt?',
   'What certifications are required for DevOps jobs in the Netherlands?',
   "What's the difference between LangGraph and CrewAI?",
 ];
@@ -849,7 +849,7 @@ async function readSSE(response) {
           stepCount++;
           const node  = PIPELINE_NODES.find(n => n.id === parsed.node);
           bar.textContent = 'Step ' + stepCount + ': ' + (node ? node.label : parsed.node);
-        } else if (evType === 'done' || evType === 'interrupt' || evType === 'error') {
+        } else if (evType === 'done' || evType === 'error') {
           bar.textContent = '';
         }
         try { handleEvent(evType, parsed); } catch (err) { console.error('[SSE] handleEvent error:', err); }
