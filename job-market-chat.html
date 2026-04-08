@@ -16,7 +16,7 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
   <style>
-    /* ── Design tokens ───────────────────────────────────────────────────── */
+    /* ── Design tokens ──────────────-─────────────────────────────────────── */
     :root {
       --brand-primary:   #4e73df;
       --brand-secondary: #1cc88a;
@@ -66,61 +66,11 @@
 
     /* ── Status bar ──────────────────────────────────────────────────────── */
     #status-bar {
-      padding: .5rem 1.1rem;
-      border-top: 1px solid rgba(78,115,223,.13);
-      display: none;
-    }
-    #status-bar-main {
-      display: flex;
-      align-items: center;
-      gap: .55rem;
+      padding: .6rem 1.1rem;
       font-size: 1rem;
       font-weight: 600;
       color: var(--brand-primary);
-    }
-    .status-spinner {
-      width: 13px; height: 13px;
-      border: 2px solid rgba(78,115,223,.25);
-      border-top-color: var(--brand-primary);
-      border-radius: 50%;
-      flex-shrink: 0;
-      animation: sspin .75s linear infinite;
-    }
-    .status-spinner.paused {
-      animation-play-state: paused;
-      opacity: .4;
-    }
-    @keyframes sspin { to { transform: rotate(360deg); } }
-    #status-toggle {
-      margin-left: auto;
-      background: none; border: none; cursor: pointer;
-      font-size: .9rem; color: var(--brand-primary); opacity: .6;
-      padding: 0 2px; line-height: 1;
-      transition: opacity .15s, transform .2s;
-    }
-    #status-toggle:hover { opacity: 1; }
-    #status-toggle.open { transform: rotate(180deg); }
-    #status-history {
-      display: none;
-      margin-top: .4rem;
-      padding-top: .4rem;
-      border-top: 1px solid rgba(78,115,223,.1);
-    }
-    #status-history.open { display: block; }
-    .history-step {
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-      font-size: .82rem;
-      font-weight: 500;
-      color: var(--text-muted);
-      padding: .1rem 0;
-    }
-    .history-step::before {
-      content: '✓';
-      color: var(--brand-secondary);
-      font-size: .78rem;
-      font-weight: 700;
+      border-top: 1px solid rgba(78,115,223,.13);
     }
 
     /* Human bubble */
@@ -585,14 +535,7 @@
           <div id="messages"></div>
 
           <!-- Status bar -->
-          <div id="status-bar">
-            <div id="status-bar-main">
-              <span class="status-spinner" id="status-spinner"></span>
-              <span id="status-label"></span>
-              <button id="status-toggle" title="Show step history">▾</button>
-            </div>
-            <div id="status-history"></div>
-          </div>
+          <div id="status-bar"></div>
 
           <!-- Input section (inside card, below messages) -->
           <div id="input-section">
@@ -700,7 +643,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
 
 <script>
-console.log('JOB-MARKET-CHAT v9 LOADED 2026-04-08');
+console.log('JOB-MARKET-CHAT v7 LOADED 2026-04-08');
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CONFIGURATION
@@ -724,10 +667,6 @@ const PIPELINE_NODES = [
   { id: 'html_report_generator', label: 'Generating HTML report',  detail: 'Building a styled HTML report with GPT-4o — typically 15–30s...' },
   { id: 'respond',               label: 'Composing response',      detail: 'Finalising and combining all answers...' },
 ];
-
-// Step tracking — reset per user message, persist across HITL streams
-let stepCount   = 0;
-let stepHistory = [];
 
 const TIPS = [
   'What are the top needed skills for an AI Engineer position in USA?',
@@ -762,11 +701,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('interrupt-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') { e.preventDefault(); sendHitlReply(); }
-  });
-
-  document.getElementById('status-toggle').addEventListener('click', () => {
-    document.getElementById('status-toggle').classList.toggle('open');
-    document.getElementById('status-history').classList.toggle('open');
   });
 });
 
@@ -882,6 +816,9 @@ async function readSSE(response) {
   const reader  = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
+  let stepCount = 0;
+
+  document.getElementById('status-bar').textContent = 'Connecting...';
 
   while (true) {
     const { done, value } = await reader.read();
@@ -908,24 +845,13 @@ async function readSSE(response) {
       if (evType && evData) {
         console.log('[SSE]', JSON.stringify(evType), evData.slice(0, 80));
         const parsed = JSON.parse(evData);
+        const bar = document.getElementById('status-bar');
         if (evType === 'node_start' && parsed.node) {
-          // Archive previous step into history before advancing
-          const prevLabel = document.getElementById('status-label').textContent;
-          if (prevLabel) {
-            stepHistory.push(prevLabel);
-            renderStepHistory();
-          }
           stepCount++;
           const node  = PIPELINE_NODES.find(n => n.id === parsed.node);
-          const label = 'Step ' + stepCount + ': ' + (node ? node.label : parsed.node);
-          document.getElementById('status-label').textContent = label;
-          document.getElementById('status-bar').style.display  = '';
-          document.getElementById('status-spinner').classList.remove('paused');
-        } else if (evType === 'interrupt') {
-          // Pipeline paused waiting for user — dim the spinner
-          document.getElementById('status-spinner').classList.add('paused');
+          bar.textContent = 'Step ' + stepCount + ': ' + (node ? node.label : parsed.node);
         } else if (evType === 'done' || evType === 'error') {
-          document.getElementById('status-bar').style.display = 'none';
+          bar.textContent = '';
         }
         try { handleEvent(evType, parsed); } catch (err) { console.error('[SSE] handleEvent error:', err); }
       }
@@ -1140,21 +1066,9 @@ function hideInterrupt() {
 /* ═══════════════════════════════════════════════════════════════════════════
    PIPELINE + GRAPH PROGRESS
 ═══════════════════════════════════════════════════════════════════════════ */
-function renderStepHistory() {
-  document.getElementById('status-history').innerHTML =
-    stepHistory.map(l => `<div class="history-step">${l}</div>`).join('');
-}
-
 function resetPipeline() {
   lastActiveNode = null;
-  stepCount   = 0;
-  stepHistory = [];
-  const bar = document.getElementById('status-bar');
-  bar.style.display = 'none';
-  document.getElementById('status-label').textContent   = '';
-  document.getElementById('status-history').innerHTML   = '';
-  document.getElementById('status-history').classList.remove('open');
-  document.getElementById('status-toggle').classList.remove('open');
+  document.getElementById('status-bar').textContent = '';
   PIPELINE_NODES.forEach(n => {
     const gn = document.getElementById(`gnode-${n.id}`);
     if (gn) gn.classList.remove('gnode-active', 'gnode-done');
