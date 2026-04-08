@@ -1127,9 +1127,9 @@ function startThinkingRow() {
   const el = document.createElement('div');
   el.className = 'thinking-row';
   el.innerHTML = `
-    <div class="thinking-current">
+    <div class="thinking-current" style="display:none;">
       <span class="thinking-dot"></span>
-      <span class="thinking-current-label">Starting…</span>
+      <span class="thinking-current-label"></span>
     </div>
     <button class="thinking-toggle d-none" onclick="toggleThinkingHistory(this)">
       <i class="bi bi-chevron-right"></i>
@@ -1153,7 +1153,7 @@ function updateThinking(id) {
   const rawPrev   = labelEl.textContent.replace(/…$/, '').trim();
   // Strip "Step N — " prefix so history items show clean names
   const prevLabel = rawPrev.replace(/^Step \d+ — /, '');
-  if (prevLabel && prevLabel !== 'Starting') {
+  if (prevLabel) {
     thinkingSteps.push(prevLabel);
     const item = document.createElement('div');
     item.className = 'thinking-done-step';
@@ -1168,6 +1168,7 @@ function updateThinking(id) {
 
   const stepNum = thinkingSteps.length + 1;
   labelEl.textContent = `Step ${stepNum} — ${label}…`;
+  labelEl.closest('.thinking-current').style.display = '';
   scrollDown();
 }
 
@@ -1179,7 +1180,7 @@ function finishThinking() {
   const rawLast   = labelEl?.textContent.replace(/…$/, '').trim();
   // Strip "Step N — " prefix so history items show clean names
   const lastLabel = rawLast ? rawLast.replace(/^Step \d+ — /, '') : rawLast;
-  if (lastLabel && lastLabel !== 'Starting' && lastLabel !== 'Resuming') {
+  if (lastLabel) {
     thinkingSteps.push(lastLabel);
     const item = document.createElement('div');
     item.className = 'thinking-done-step';
@@ -1189,11 +1190,8 @@ function finishThinking() {
 
   const total = thinkingSteps.length;
 
-  // Replace current indicator with green "done"
-  thinkingRow.querySelector('.thinking-current').innerHTML = `
-    <span class="thinking-dot" style="background:#10b981;animation:none;"></span>
-    <span style="color:#047857;font-weight:600;">${total > 0 ? `${total} step${total !== 1 ? 's' : ''} completed` : 'Done'}</span>
-  `;
+  // Hide the current step indicator — done
+  thinkingRow.querySelector('.thinking-current').style.display = 'none';
 
   // Only show the history toggle if there are steps to show
   if (total > 0) {
@@ -1215,7 +1213,7 @@ function pauseThinking() {
   const rawLabel  = labelEl?.textContent.replace(/…$/, '').trim();
   // Strip "Step N — " prefix so history items show clean names
   const curLabel  = rawLabel ? rawLabel.replace(/^Step \d+ — /, '') : rawLabel;
-  if (curLabel && curLabel !== 'Starting' && curLabel !== 'Resuming') {
+  if (curLabel) {
     thinkingSteps.push(curLabel);
     const item = document.createElement('div');
     item.className = 'thinking-done-step';
@@ -1226,11 +1224,8 @@ function pauseThinking() {
     toggle.querySelector('.thinking-history-count').textContent =
       `${thinkingSteps.length} step${thinkingSteps.length > 1 ? 's' : ''} completed`;
   }
-  // Show amber "waiting" state — keep thinkingRow alive (not sealed)
-  thinkingRow.querySelector('.thinking-current').innerHTML = `
-    <span class="thinking-dot" style="background:#f59e0b;animation:none;"></span>
-    <span style="color:#92400e;font-weight:600;">Waiting for your response…</span>
-  `;
+  // Hide the current step indicator while waiting for HITL response
+  thinkingRow.querySelector('.thinking-current').style.display = 'none';
 }
 
 function resumeThinking() {
@@ -1239,11 +1234,7 @@ function resumeThinking() {
     startThinkingRow();
     return;
   }
-  // Reactivate the existing row with a fresh pulsing dot
-  thinkingRow.querySelector('.thinking-current').innerHTML = `
-    <span class="thinking-dot"></span>
-    <span class="thinking-current-label">Resuming…</span>
-  `;
+  // Reactivate — next node_start event will fill in the step label
   scrollDown();
 }
 
