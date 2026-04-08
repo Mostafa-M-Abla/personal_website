@@ -259,8 +259,9 @@
     .gnode-intent text { fill: #7c3aed; }
     .gnode-hitl rect  { stroke: #f59e0b; fill: #fffbeb; }
     .gnode-hitl text  { fill: #92400e; }
-    .gnode-output rect { stroke: #10b981; fill: rgba(16,185,129,.08); }
-    .gnode-output text { fill: #047857; }
+    /* Intent nodes turn green when active or done */
+    .gnode-intent.gnode-active rect, .gnode-intent.gnode-done rect { stroke: #10b981; stroke-width: 2; fill: rgba(16,185,129,.1); }
+    .gnode-intent.gnode-active text, .gnode-intent.gnode-done text { fill: #047857; }
     .gnode-entry rect  { stroke: var(--brand-primary); stroke-width: 2; fill: rgba(78,115,223,.07); }
     .gnode-entry text  { fill: var(--brand-primary); font-weight: 700; }
 
@@ -484,7 +485,7 @@
               <span><span class="graph-legend-dot" style="background:rgba(78,115,223,.15);border:1.5px solid var(--brand-primary);"></span>Processing</span>
               <span><span class="graph-legend-dot" style="background:rgba(196,181,253,.1);border:1.5px solid #c4b5fd;"></span>Intent branch</span>
               <span><span class="graph-legend-dot" style="background:#fffbeb;border:1.5px solid #f59e0b;"></span>HITL pause</span>
-              <span><span class="graph-legend-dot" style="background:rgba(16,185,129,.08);border:1.5px solid #10b981;"></span>Output</span>
+              <span><span class="graph-legend-dot" style="background:rgba(16,185,129,.1);border:1.5px solid #10b981;"></span>Processed</span>
             </div>
           </div>
 
@@ -532,7 +533,7 @@
                 <rect x="350" y="60" width="160" height="32" rx="8"/>
                 <text x="430" y="80" text-anchor="middle">Task Dispatcher</text>
               </g>
-              <g class="gnode" id="gnode-answer_general">
+              <g class="gnode gnode-intent" id="gnode-answer_general">
                 <rect x="10" y="102" width="120" height="32" rx="8"/>
                 <text x="70" y="122" text-anchor="middle">Answer General</text>
               </g>
@@ -592,7 +593,7 @@
                 <rect x="660" y="454" width="120" height="32" rx="8"/>
                 <text x="720" y="474" text-anchor="middle">HTML Report</text>
               </g>
-              <g class="gnode gnode-output" id="gnode-respond">
+              <g class="gnode" id="gnode-respond">
                 <rect x="375" y="542" width="110" height="32" rx="8"/>
                 <text x="430" y="562" text-anchor="middle">Respond</text>
               </g>
