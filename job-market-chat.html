@@ -324,7 +324,7 @@
     <div class="container px-4 px-md-5">
       <div class="page-wrap">
         <div class="soft-card p-4 p-md-5">
-          <div class="mb-4">
+          <div class="mb-4 text-center">
             <h1 class="h3 fw-bolder mb-2">
               <span class="text-gradient">Job Market Intelligence</span>
               <span class="ms-2 badge rounded-pill" style="background:rgba(16,185,129,.15);color:#047857;font-size:.6rem;vertical-align:middle;">Live Demo</span>
@@ -650,6 +650,142 @@
           </a>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How it works — LangGraph visualisation ────────────────────────── -->
+  <section class="pb-5">
+    <div class="container px-4 px-md-5">
+      <div class="page-wrap">
+        <div class="soft-card p-4">
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h6 class="fw-bolder mb-0 text-muted" style="text-transform:uppercase;letter-spacing:.5px;font-size:.78rem;">
+              <i class="bi bi-diagram-3 me-1"></i>How it works — LangGraph
+            </h6>
+            <!-- Legend -->
+            <div class="d-flex gap-3 flex-wrap" style="font-size:.74rem; font-weight:600; color:#6c757d;">
+              <span><span class="graph-legend-dot" style="background:rgba(78,115,223,.15);border:1.5px solid var(--brand-primary);"></span>Processing</span>
+              <span><span class="graph-legend-dot" style="background:rgba(196,181,253,.1);border:1.5px solid #c4b5fd;"></span>Intent branch</span>
+              <span><span class="graph-legend-dot" style="background:#fffbeb;border:1.5px solid #f59e0b;"></span>HITL pause</span>
+              <span><span class="graph-legend-dot" style="background:rgba(16,185,129,.08);border:1.5px solid #10b981;"></span>Output</span>
+            </div>
+          </div>
+
+          <div class="graph-wrap">
+            <svg viewBox="0 0 860 586" width="100%" style="max-height:560px;" aria-label="LangGraph execution graph">
+              <defs>
+                <marker id="arrowhead" markerWidth="7" markerHeight="7" refX="5.5" refY="3" orient="auto">
+                  <path d="M0,0 L0,6 L7,3 z" fill="#c4c9d4"/>
+                </marker>
+              </defs>
+
+              <!-- ── Edges ────────────────────────────────────────────── -->
+              <path class="graph-edge" d="M430,46 L 430,60" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,92 C 430,100 70,88 70,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,92 C 430,100 240,96 240,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,92 C 430,100 420,98 420,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M430,92 C 430,100 600,96 600,102" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge-dashed" d="M70,134 C 20,280 20,510 430,542" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M240,134 C 240,158 320,163 320,190" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M420,134 C 420,158 320,163 320,190" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M600,134 C 600,158 682,163 682,190" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M682,222 L 677,278" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge-dashed" d="M682,222 C 840,280 840,510 430,542" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M677,310 C 840,350 840,160 385,206" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M320,222 C 320,248 157,253 157,278" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge-dashed" d="M320,222 C 380,252 420,295 405,366" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M235,294 L 275,294" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M385,294 L 420,294" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M500,310 C 500,340 405,345 405,366" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M405,398 C 350,430 120,438 120,454" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M405,398 C 398,428 317,440 317,454" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M405,398 C 418,428 527,440 527,454" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M395,470 L 450,470" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M605,470 L 660,470" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge-dashed" d="M527,486 C 527,516 430,520 430,542" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M720,486 C 720,524 430,530 430,542" marker-end="url(#arrowhead)"/>
+              <path class="graph-edge" d="M120,486 C 120,524 430,530 430,542" marker-end="url(#arrowhead)"/>
+
+              <!-- ── Nodes ────────────────────────────────────────────── -->
+              <g class="gnode gnode-entry" id="gnode-planner">
+                <rect x="340" y="14" width="180" height="32" rx="8"/>
+                <text x="430" y="34" text-anchor="middle">Planner</text>
+              </g>
+              <g class="gnode" id="gnode-task_dispatcher">
+                <rect x="350" y="60" width="160" height="32" rx="8"/>
+                <text x="430" y="80" text-anchor="middle">Task Dispatcher</text>
+              </g>
+              <g class="gnode" id="gnode-answer_general">
+                <rect x="10" y="102" width="120" height="32" rx="8"/>
+                <text x="70" y="122" text-anchor="middle">Answer General</text>
+              </g>
+              <g class="gnode gnode-intent">
+                <rect x="170" y="102" width="140" height="32" rx="8"/>
+                <text x="240" y="122" text-anchor="middle">Focused Question</text>
+              </g>
+              <g class="gnode gnode-intent">
+                <rect x="355" y="102" width="130" height="32" rx="8"/>
+                <text x="420" y="122" text-anchor="middle">Full Analysis</text>
+              </g>
+              <g class="gnode gnode-intent">
+                <rect x="530" y="102" width="140" height="32" rx="8"/>
+                <text x="600" y="122" text-anchor="middle">Resume Analysis</text>
+              </g>
+              <g class="gnode" id="gnode-cache_lookup">
+                <rect x="255" y="190" width="130" height="32" rx="8"/>
+                <text x="320" y="210" text-anchor="middle">Cache Lookup</text>
+              </g>
+              <g class="gnode" id="gnode-check_resume">
+                <rect x="620" y="190" width="125" height="32" rx="8"/>
+                <text x="682" y="210" text-anchor="middle">Check Resume</text>
+              </g>
+              <g class="gnode gnode-hitl" id="gnode-confirm_search_params">
+                <rect x="80" y="278" width="155" height="32" rx="8"/>
+                <text x="157" y="298" text-anchor="middle">Confirm Search ⏸</text>
+              </g>
+              <g class="gnode" id="gnode-job_collector">
+                <rect x="275" y="278" width="110" height="32" rx="8"/>
+                <text x="330" y="298" text-anchor="middle">Collect Jobs</text>
+              </g>
+              <g class="gnode" id="gnode-requirements_extractor">
+                <rect x="420" y="278" width="160" height="32" rx="8"/>
+                <text x="500" y="298" text-anchor="middle">Extract Requirements</text>
+              </g>
+              <g class="gnode" id="gnode-resume_parser">
+                <rect x="620" y="278" width="115" height="32" rx="8"/>
+                <text x="677" y="298" text-anchor="middle">Parse Resume</text>
+              </g>
+              <g class="gnode" id="gnode-market_analyzer">
+                <rect x="330" y="366" width="150" height="32" rx="8"/>
+                <text x="405" y="386" text-anchor="middle">Market Analyzer</text>
+              </g>
+              <g class="gnode" id="gnode-answer_focused">
+                <rect x="55" y="454" width="130" height="32" rx="8"/>
+                <text x="120" y="474" text-anchor="middle">Answer Focused</text>
+              </g>
+              <g class="gnode" id="gnode-skill_gap_analyzer">
+                <rect x="240" y="454" width="155" height="32" rx="8"/>
+                <text x="317" y="474" text-anchor="middle">Skill Gap Analysis</text>
+              </g>
+              <g class="gnode gnode-hitl" id="gnode-confirm_report_format">
+                <rect x="450" y="454" width="155" height="32" rx="8"/>
+                <text x="527" y="474" text-anchor="middle">Confirm Format ⏸</text>
+              </g>
+              <g class="gnode" id="gnode-html_report_generator">
+                <rect x="660" y="454" width="120" height="32" rx="8"/>
+                <text x="720" y="474" text-anchor="middle">HTML Report</text>
+              </g>
+              <g class="gnode gnode-output" id="gnode-respond">
+                <rect x="375" y="542" width="110" height="32" rx="8"/>
+                <text x="430" y="562" text-anchor="middle">Respond</text>
+              </g>
+            </svg>
+          </div>
+          <p class="text-muted mt-2 mb-0" style="font-size:.74rem;">
+            Dashed arrows = optional paths (cache hit / no resume / text-only report). Nodes highlight live as your query runs.
+          </p>
+        </div>
       </div>
     </div>
   </section>
