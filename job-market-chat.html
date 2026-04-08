@@ -835,6 +835,7 @@ async function readSSE(response) {
 
     for (const part of parts) {
       if (!part.trim() || part.startsWith(':')) continue;
+      console.log('[PART]', JSON.stringify(part.slice(0, 120)));
       const lines = part.trim().split('\n');
       let evType = '', evData = '';
       for (const line of lines) {
