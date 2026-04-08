@@ -643,7 +643,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
 
 <script>
-console.log('JOB-MARKET-CHAT v6 LOADED 2026-04-08');
+console.log('JOB-MARKET-CHAT v7 LOADED 2026-04-08');
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CONFIGURATION
@@ -830,7 +830,7 @@ async function readSSE(response) {
       buffer += decoder.decode(value, { stream: true });
     }
 
-    const parts = buffer.split('\n\n');
+    const parts = buffer.split(/\r?\n\r?\n/);
     buffer = parts.pop();
 
     for (const part of parts) {
