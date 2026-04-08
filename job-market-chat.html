@@ -199,47 +199,6 @@
     }
     #attach-btn:hover { background: rgba(78,115,223,.18); }
 
-    /* ── Thinking row (in-chat progress indicator) ──────────────────────── */
-    .thinking-row {
-      margin: .4rem 0 .6rem;
-      background: rgba(78,115,223,.05);
-      border: 1px solid rgba(78,115,223,.13);
-      border-radius: .75rem;
-      overflow: hidden;
-      font-size: .82rem;
-    }
-    .thinking-current {
-      display: flex; align-items: center; gap: .5rem;
-      padding: .55rem .9rem;
-      color: var(--brand-primary); font-weight: 600;
-    }
-    .thinking-dot {
-      width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
-      background: var(--brand-primary);
-      animation: tdot 1s infinite;
-    }
-    @keyframes tdot { 0%,100%{opacity:1} 50%{opacity:.2} }
-    .thinking-toggle {
-      width: 100%; background: none; border: none;
-      border-top: 1px solid rgba(78,115,223,.1);
-      padding: .3rem .9rem;
-      display: flex; align-items: center; gap: .4rem;
-      color: #6b7280; font-size: .76rem; cursor: pointer; text-align: left;
-      transition: background .12s;
-    }
-    .thinking-toggle:hover { background: rgba(78,115,223,.05); }
-    .thinking-toggle .bi { transition: transform .2s; font-size: .7rem; }
-    .thinking-toggle .bi.open { transform: rotate(90deg); }
-    .thinking-history-list {
-      padding: .3rem .9rem .5rem 2rem;
-      border-top: 1px solid rgba(78,115,223,.07);
-    }
-    .thinking-done-step {
-      color: #6b7280; padding: .12rem 0;
-      display: flex; align-items: center; gap: .45rem; font-size: .79rem;
-    }
-    .thinking-done-step .bi { color: #10b981; font-size: .72rem; flex-shrink: 0; }
-
     /* Example prompt chips */
     .tip-chip {
       display: inline-block;
@@ -710,8 +669,6 @@ let isStreaming        = false;
 let currentBubble     = null;
 let currentBubbleRaw  = '';
 let lastActiveNode    = null;
-let thinkingRow       = null;   // current in-chat thinking row element
-let thinkingSteps     = [];     // labels of completed steps
 
 /* ═══════════════════════════════════════════════════════════════════════════
    BOOT
@@ -798,8 +755,6 @@ async function handleSend() {
   setStreaming(true);
   resetPipeline();
   addHumanBubble(text);
-  startThinkingRow();
-
   try {
     const res = await fetch(`${API_BASE}/api/chat`, {
       method: 'POST',
@@ -809,7 +764,6 @@ async function handleSend() {
     if (!res.ok) throw new Error((await res.json()).detail || `HTTP ${res.status}`);
     await readSSE(res);
   } catch (e) {
-    finishThinking();
     finalizeAiBubble(false);
     addErrorBubble(e.message);
     setStreaming(false);
@@ -825,7 +779,6 @@ async function sendHitlReply(fixed = null, inputId = 'interrupt-input') {
   hideInterrupt();
   setStreaming(true);
   addHumanBubble(reply);
-  resumeThinking();
 
   try {
     const res = await fetch(`${API_BASE}/api/chat/${sessionId}/reply`, {
@@ -836,7 +789,6 @@ async function sendHitlReply(fixed = null, inputId = 'interrupt-input') {
     if (!res.ok) throw new Error((await res.json()).detail || `HTTP ${res.status}`);
     await readSSE(res);
   } catch (e) {
-    finishThinking();
     finalizeAiBubble(false);
     addErrorBubble(e.message);
     setStreaming(false);
@@ -896,22 +848,18 @@ function handleEvent(type, data) {
 
     case 'interrupt':
       if (lastActiveNode) setNodeDone(lastActiveNode);
-      pauseThinking();
       finalizeAiBubble(false);
       if (data.session_id && data.session_id !== sessionId) {
         sessionId = data.session_id;
         localStorage.setItem('jmis_session', sessionId);
       }
       showInterrupt(data.prompt);
-      // Move thinking row to end so it sits below the prompt bubble, not above it
-      if (thinkingRow) document.getElementById('messages').appendChild(thinkingRow);
       scrollDown();
       setStreaming(false);
       break;
 
     case 'done':
       if (lastActiveNode) setNodeDone(lastActiveNode);
-      finishThinking();
       if (!currentBubbleRaw.trim() && data.final_text_response) {
         // No tokens streamed — discard empty bubble, render full response at once.
         currentBubble?.closest('.msg-ai')?.remove();
@@ -932,7 +880,6 @@ function handleEvent(type, data) {
 
     case 'error':
       if (lastActiveNode) setNodeDone(lastActiveNode);
-      finishThinking();
       finalizeAiBubble(false);
       addErrorBubble(data.detail);
       setStreaming(false);
@@ -1106,146 +1053,12 @@ function setNodeActive(id) {
   // SVG graph highlight (visible when user scrolls to the "How it works" diagram)
   const gn = document.getElementById(`gnode-${id}`);
   if (gn) { gn.classList.remove('gnode-done'); gn.classList.add('gnode-active'); }
-
-  // In-chat thinking row — the main progress indicator
-  updateThinking(id);
 }
 
 function setNodeDone(id) {
   if (!id) return;
   const gn = document.getElementById(`gnode-${id}`);
   if (gn) { gn.classList.remove('gnode-active'); gn.classList.add('gnode-done'); }
-}
-
-/* ── In-chat thinking row ─────────────────────────────────────────────── */
-function startThinkingRow() {
-  if (thinkingRow) thinkingRow.remove();
-  thinkingRow  = null;
-  thinkingSteps = [];
-
-  const el = document.createElement('div');
-  el.className = 'thinking-row';
-  el.innerHTML = `
-    <div class="thinking-current" style="display:none;">
-      <span class="thinking-dot"></span>
-      <span class="thinking-current-label"></span>
-    </div>
-    <button class="thinking-toggle d-none" onclick="toggleThinkingHistory(this)">
-      <i class="bi bi-chevron-right"></i>
-      <span class="thinking-history-count"></span>
-    </button>
-    <div class="thinking-history-list" style="display:none;"></div>
-  `;
-  thinkingRow = el;
-  document.getElementById('messages').appendChild(el);
-  scrollDown();
-}
-
-function updateThinking(id) {
-  if (!thinkingRow) startThinkingRow();
-
-  const node  = PIPELINE_NODES.find(n => n.id === id);
-  const label = node?.label || id;
-
-  // Archive the current step into the collapsible history
-  const labelEl   = thinkingRow.querySelector('.thinking-current-label');
-  const rawPrev   = labelEl.textContent.replace(/…$/, '').trim();
-  // Strip "Step N — " prefix so history items show clean names
-  const prevLabel = rawPrev.replace(/^Step \d+ — /, '');
-  if (prevLabel) {
-    thinkingSteps.push(prevLabel);
-    const item = document.createElement('div');
-    item.className = 'thinking-done-step';
-    item.innerHTML = `<i class="bi bi-check-circle-fill"></i>${esc(prevLabel)}`;
-    thinkingRow.querySelector('.thinking-history-list').appendChild(item);
-
-    const toggle = thinkingRow.querySelector('.thinking-toggle');
-    toggle.classList.remove('d-none');
-    toggle.querySelector('.thinking-history-count').textContent =
-      `${thinkingSteps.length} step${thinkingSteps.length > 1 ? 's' : ''} completed`;
-  }
-
-  const stepNum = thinkingSteps.length + 1;
-  labelEl.textContent = `Step ${stepNum} — ${label}…`;
-  labelEl.closest('.thinking-current').style.display = '';
-  scrollDown();
-}
-
-function finishThinking() {
-  if (!thinkingRow) return;
-
-  // Archive the last active step (skip "Starting" and "Resuming" placeholders)
-  const labelEl   = thinkingRow.querySelector('.thinking-current-label');
-  const rawLast   = labelEl?.textContent.replace(/…$/, '').trim();
-  // Strip "Step N — " prefix so history items show clean names
-  const lastLabel = rawLast ? rawLast.replace(/^Step \d+ — /, '') : rawLast;
-  if (lastLabel) {
-    thinkingSteps.push(lastLabel);
-    const item = document.createElement('div');
-    item.className = 'thinking-done-step';
-    item.innerHTML = `<i class="bi bi-check-circle-fill"></i>${esc(lastLabel)}`;
-    thinkingRow.querySelector('.thinking-history-list').appendChild(item);
-  }
-
-  const total = thinkingSteps.length;
-
-  // Hide the current step indicator — done
-  thinkingRow.querySelector('.thinking-current').style.display = 'none';
-
-  // Only show the history toggle if there are steps to show
-  if (total > 0) {
-    const toggle = thinkingRow.querySelector('.thinking-toggle');
-    toggle.classList.remove('d-none');
-    toggle.querySelector('.thinking-history-count').textContent = 'Show steps';
-  }
-
-  // Move to end of messages so it sits below the AI response, not above it
-  document.getElementById('messages').appendChild(thinkingRow);
-  thinkingRow = null;  // sealed — no more updates
-  scrollDown();
-}
-
-function pauseThinking() {
-  if (!thinkingRow) return;
-  // Archive the current step label into history before pausing
-  const labelEl   = thinkingRow.querySelector('.thinking-current-label');
-  const rawLabel  = labelEl?.textContent.replace(/…$/, '').trim();
-  // Strip "Step N — " prefix so history items show clean names
-  const curLabel  = rawLabel ? rawLabel.replace(/^Step \d+ — /, '') : rawLabel;
-  if (curLabel) {
-    thinkingSteps.push(curLabel);
-    const item = document.createElement('div');
-    item.className = 'thinking-done-step';
-    item.innerHTML = `<i class="bi bi-check-circle-fill"></i>${esc(curLabel)}`;
-    thinkingRow.querySelector('.thinking-history-list').appendChild(item);
-    const toggle = thinkingRow.querySelector('.thinking-toggle');
-    toggle.classList.remove('d-none');
-    toggle.querySelector('.thinking-history-count').textContent =
-      `${thinkingSteps.length} step${thinkingSteps.length > 1 ? 's' : ''} completed`;
-  }
-  // Hide the current step indicator while waiting for HITL response
-  thinkingRow.querySelector('.thinking-current').style.display = 'none';
-}
-
-function resumeThinking() {
-  if (!thinkingRow) {
-    // Edge case: thinking row was lost (e.g. page reload between HITL turns)
-    startThinkingRow();
-    return;
-  }
-  // Move to end so steps appear below the user's reply, not stranded above it
-  document.getElementById('messages').appendChild(thinkingRow);
-  scrollDown();
-}
-
-function toggleThinkingHistory(btn) {
-  const row    = btn.closest('.thinking-row');
-  const list   = row.querySelector('.thinking-history-list');
-  const icon   = btn.querySelector('.bi');
-  const isOpen = list.style.display !== 'none';
-  list.style.display = isOpen ? 'none' : '';
-  icon.classList.toggle('open', !isOpen);
-  btn.querySelector('.thinking-history-count').textContent = isOpen ? 'Show steps' : 'Hide steps';
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
