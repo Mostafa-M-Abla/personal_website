@@ -331,13 +331,14 @@
               <span class="ms-2 badge rounded-pill" style="background:rgba(16,185,129,.15);color:#047857;font-size:.6rem;vertical-align:middle;">Live Demo</span>
             </h1>
             <p class="mb-0 text-muted text-start" style="font-size:.95rem; line-height:1.7;">
-              Ask about in-demand skills, salary trends, or certification requirements for any role and country
+              An agentic AI system built with LangGraph that analyses real job market data from Google Jobs via SerpAPI.
+              Ask about in-demand skills, or certification requirements for any role and country
               — or upload your CV for a personalised gap analysis. The system fetches live job postings,
-              extracts skill frequencies with AI, and streams a structured market report or resume review
+              extracts skill frequencies, and streams a structured market report or resume review
               directly in the chat. Search parameters are confirmed with you before any data is collected.
             </p>
             <p class="mt-2 mb-0 text-muted text-start" style="font-size:.88rem;">
-              View full project details and source code <a href="https://github.com/Mostafa-M-Abla/job-market-intelligence-system" target="_blank" rel="noopener noreferrer">here</a>.
+              View full project technical details and source code <a href="https://github.com/Mostafa-M-Abla/job-market-intelligence-system" target="_blank" rel="noopener noreferrer">here</a>.
             </p>
           </div>
 
@@ -351,7 +352,7 @@
             <div class="col-sm-4">
               <div class="p-2 rounded-3 h-100" style="background:rgba(28,200,138,.08);">
                 <div class="fw-bolder small mb-1"><i class="bi bi-person-check me-1"></i>Human-in-the-Loop</div>
-                <div class="text-muted" style="font-size:.77rem;">You confirm search parameters and output format before any API call is made</div>
+                <div class="text-muted" style="font-size:.77rem;">You confirm search parameters and output format before expensive and time-consuming API calls are made</div>
               </div>
             </div>
             <div class="col-sm-4">
@@ -714,10 +715,10 @@ function clearSession() {
 
 /* ─── Welcome + Tips ─────────────────────────────────────────────────────── */
 function renderWelcome() {
-  addAiBubble(`**Hi!** I am a Job Market Analysis Assistant, I can help you with the following topics:
+  addAiBubble(`I am your Job Market Analysis Assistant, I can help you with the following topics:
 
-- **Market Analysis** — full job market breakdown for any role and country
-- **Focused Questions** — based on market job market analysis can answer questions about required cloud platforms, certifications, frameworks, etc.
+- **Market Analysis** — full job market requirements breakdown for any role and country
+- **Focused Questions** — based on market job market analysis, can answer questions about required cloud platforms, certifications, frameworks, etc.
 - **Resume Gap Review** — based on your resume, can suggest what you should learn next.
 - **General questions** — tool comparisons, career advice, anything AI/ML-related.`);
 }
