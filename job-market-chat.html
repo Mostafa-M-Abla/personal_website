@@ -1044,7 +1044,7 @@ function showInterrupt(prompt) {
   addAiBubble(prompt);
 
   const isAB      = prompt.includes('Reply A or B');
-  const isConfirm = prompt.includes('Reply **confirm**');
+  const isConfirm = prompt.includes('**confirm**');
   document.getElementById('interrupt-prompt').textContent = prompt;
   document.getElementById('hitl-text-wrap').classList.toggle('d-none',    isAB || isConfirm);
   document.getElementById('hitl-ab-wrap').classList.toggle('d-none',     !isAB);
