@@ -643,6 +643,8 @@
 <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
 
 <script>
+console.log('JOB-MARKET-CHAT v6 LOADED 2026-04-08');
+
 /* ═══════════════════════════════════════════════════════════════════════════
    CONFIGURATION
 ═══════════════════════════════════════════════════════════════════════════ */
@@ -816,6 +818,8 @@ async function readSSE(response) {
   let buffer = '';
   let stepCount = 0;
 
+  document.getElementById('status-bar').textContent = 'Connecting...';
+
   while (true) {
     const { done, value } = await reader.read();
 
@@ -840,11 +844,13 @@ async function readSSE(response) {
       if (evType && evData) {
         console.log('[SSE]', JSON.stringify(evType), evData.slice(0, 80));
         const parsed = JSON.parse(evData);
+        const bar = document.getElementById('status-bar');
         if (evType === 'node_start' && parsed.node) {
           stepCount++;
           const node  = PIPELINE_NODES.find(n => n.id === parsed.node);
-          document.getElementById('status-bar').textContent =
-            'Step ' + stepCount + ': ' + (node ? node.label : parsed.node);
+          bar.textContent = 'Step ' + stepCount + ': ' + (node ? node.label : parsed.node);
+        } else if (evType === 'done' || evType === 'interrupt' || evType === 'error') {
+          bar.textContent = '';
         }
         try { handleEvent(evType, parsed); } catch (err) { console.error('[SSE] handleEvent error:', err); }
       }
