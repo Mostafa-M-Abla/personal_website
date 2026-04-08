@@ -814,6 +814,7 @@ async function readSSE(response) {
   const reader  = response.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
+  let stepCount = 0;
 
   while (true) {
     const { done, value } = await reader.read();
@@ -837,8 +838,15 @@ async function readSSE(response) {
         if (line.startsWith('data: '))  evData = line.slice(6).trim();
       }
       if (evType && evData) {
-        console.log('[SSE]', evType, evData);
-        document.getElementById('status-bar').textContent = '[' + evType + '] ' + evData.slice(0, 60);
+        if (evType === 'node_start') {
+          stepCount++;
+          try {
+            const nodeId = JSON.parse(evData).node;
+            const node   = PIPELINE_NODES.find(n => n.id === nodeId);
+            const label  = node ? node.label : nodeId;
+            document.getElementById('status-bar').textContent = 'Step ' + stepCount + ': ' + label;
+          } catch (_) {}
+        }
         try { handleEvent(evType, JSON.parse(evData)); } catch (err) { console.error('[SSE] handleEvent error:', err); }
       }
     }
@@ -1064,12 +1072,6 @@ function resetPipeline() {
 function setNodeActive(id) {
   if (lastActiveNode && lastActiveNode !== id) setNodeDone(lastActiveNode);
   lastActiveNode = id;
-
-  // Update status bar with current step name
-  const node = PIPELINE_NODES.find(n => n.id === id);
-  const label = node ? node.label : id;
-  console.log('[STEP]', id, '→', label);
-  document.getElementById('status-bar').textContent = label;
 
   // SVG graph highlight (visible when user scrolls to the "How it works" diagram)
   const gn = document.getElementById(`gnode-${id}`);
