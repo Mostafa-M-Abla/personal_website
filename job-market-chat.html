@@ -530,15 +530,15 @@
                 <rect x="10" y="102" width="120" height="32" rx="8"/>
                 <text x="70" y="122" text-anchor="middle">Answer General</text>
               </g>
-              <g class="gnode gnode-intent">
+              <g class="gnode gnode-intent" id="gnode-focused_question">
                 <rect x="170" y="102" width="140" height="32" rx="8"/>
                 <text x="240" y="122" text-anchor="middle">Focused Question</text>
               </g>
-              <g class="gnode gnode-intent">
+              <g class="gnode gnode-intent" id="gnode-full_market_analysis">
                 <rect x="355" y="102" width="130" height="32" rx="8"/>
                 <text x="420" y="122" text-anchor="middle">Full Analysis</text>
               </g>
-              <g class="gnode gnode-intent">
+              <g class="gnode gnode-intent" id="gnode-resume_analysis">
                 <rect x="530" y="102" width="140" height="32" rx="8"/>
                 <text x="600" y="122" text-anchor="middle">Resume Analysis</text>
               </g>
@@ -625,7 +625,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
 
 <script>
-console.log('JOB-MARKET-CHAT v12 Great it worked, see scree LOADED 2026-04-08');
+console.log('JOB-MARKET-CHAT v13 Great it worked, see scree LOADED 2026-04-08');
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CONFIGURATION
@@ -863,6 +863,13 @@ function handleEvent(type, data) {
   switch (type) {
     case 'node_start':
       setNodeActive(data.node);
+      break;
+
+    case 'intent_selected':
+      // Highlight the chosen intent label node (general_question uses answer_general directly)
+      if (data.intent !== 'general_question') {
+        setNodeActive(data.intent);
+      }
       break;
 
     case 'token':
