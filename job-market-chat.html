@@ -838,14 +838,15 @@ async function readSSE(response) {
         if (line.startsWith('data: '))  evData = line.slice(6).trim();
       }
       if (evType && evData) {
-        if (evType === 'node_start') {
+        console.log('[SSE]', JSON.stringify(evType), evData.slice(0, 80));
+        const parsed = JSON.parse(evData);
+        if (evType === 'node_start' && parsed.node) {
           stepCount++;
-          const nodeId = JSON.parse(evData).node;
-          const node   = PIPELINE_NODES.find(n => n.id === nodeId);
-          const label  = node ? node.label : nodeId;
-          document.getElementById('status-bar').textContent = 'Step ' + stepCount + ': ' + label;
+          const node  = PIPELINE_NODES.find(n => n.id === parsed.node);
+          document.getElementById('status-bar').textContent =
+            'Step ' + stepCount + ': ' + (node ? node.label : parsed.node);
         }
-        try { handleEvent(evType, JSON.parse(evData)); } catch (err) { console.error('[SSE] handleEvent error:', err); }
+        try { handleEvent(evType, parsed); } catch (err) { console.error('[SSE] handleEvent error:', err); }
       }
     }
 
