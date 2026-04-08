@@ -1005,7 +1005,7 @@ function appendToken(content) {
     dots.style.display = 'none';
     currentBubble.style.display = '';
   }
-  currentBubble.textContent = currentBubbleRaw;
+  currentBubble.innerHTML = renderMd(currentBubbleRaw);
   scrollDown();
 }
 
