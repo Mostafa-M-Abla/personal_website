@@ -331,31 +331,33 @@
               <span class="ms-2 badge rounded-pill" style="background:rgba(16,185,129,.15);color:#047857;font-size:.6rem;vertical-align:middle;">Live Demo</span>
             </h1>
             <p class="mb-0 text-muted text-start" style="font-size:.95rem; line-height:1.7;">
-              An agentic AI system built with LangGraph that analyses real job market data from Google Jobs via SerpAPI.
-              Ask about any role and country — it classifies your intent, confirms search parameters with you
-              (human-in-the-loop), collects live job postings, extracts skill requirements with GPT-4o-mini,
-              and synthesises a structured market analysis or personalised resume gap report — all streamed live
-              via Server-Sent Events.
+              Ask about in-demand skills, salary trends, or certification requirements for any role and country
+              — or upload your CV for a personalised gap analysis. The system fetches live job postings,
+              extracts skill frequencies with AI, and streams a structured market report or resume review
+              directly in the chat. Search parameters are confirmed with you before any data is collected.
+            </p>
+            <p class="mt-2 mb-0 text-muted text-start" style="font-size:.88rem;">
+              View full project details and source code <a href="https://github.com/Mostafa-M-Abla/job-market-intelligence-system" target="_blank" rel="noopener noreferrer">here</a>.
             </p>
           </div>
 
           <div class="row g-2">
             <div class="col-sm-4">
               <div class="p-2 rounded-3 h-100" style="background:rgba(78,115,223,.06);">
-                <div class="fw-bolder small mb-1"><i class="bi bi-robot me-1"></i>4 Intents</div>
-                <div class="text-muted" style="font-size:.77rem;">General Q&amp;A · Focused market question · Full analysis · Resume gap review</div>
+                <div class="fw-bolder small mb-1"><i class="bi bi-diagram-3 me-1"></i>Agentic Planning</div>
+                <div class="text-muted" style="font-size:.77rem;">Decomposes your question into tasks, classifies intent, and routes each through the right pipeline</div>
               </div>
             </div>
             <div class="col-sm-4">
               <div class="p-2 rounded-3 h-100" style="background:rgba(28,200,138,.08);">
                 <div class="fw-bolder small mb-1"><i class="bi bi-person-check me-1"></i>Human-in-the-Loop</div>
-                <div class="text-muted" style="font-size:.77rem;">Confirm search parameters and choose report format before running</div>
+                <div class="text-muted" style="font-size:.77rem;">You confirm search parameters and output format before any API call is made</div>
               </div>
             </div>
             <div class="col-sm-4">
               <div class="p-2 rounded-3 h-100" style="background:rgba(245,158,11,.08);">
-                <div class="fw-bolder small mb-1"><i class="bi bi-lightning-charge me-1"></i>Real-time Streaming</div>
-                <div class="text-muted" style="font-size:.77rem;">LLM tokens stream live · Pipeline steps update as the graph runs</div>
+                <div class="fw-bolder small mb-1"><i class="bi bi-lightning-charge me-1"></i>Live Streaming</div>
+                <div class="text-muted" style="font-size:.77rem;">Answers stream token by token · Each pipeline step shown as it runs</div>
               </div>
             </div>
           </div>
@@ -764,7 +766,7 @@ async function handleSend() {
     const res = await fetch(`${API_BASE}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, session_id: sessionId, total_posts: 10 }),
+      body: JSON.stringify({ message: text, session_id: sessionId, total_posts: 3 }),
     });
     if (!res.ok) throw new Error((await res.json()).detail || `HTTP ${res.status}`);
     await readSSE(res);
