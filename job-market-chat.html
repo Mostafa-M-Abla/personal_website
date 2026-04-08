@@ -714,14 +714,12 @@ function clearSession() {
 
 /* ─── Welcome + Tips ─────────────────────────────────────────────────────── */
 function renderWelcome() {
-  addAiBubble(`**Welcome!** Here's what I can do:
+  addAiBubble(`**Hi!** I am a Job Market Analysis Assistant, I can help you with the following topics:
 
-- **Market analysis** — full job market breakdown for any role and country
-- **Focused questions** — cloud platforms, certifications, frameworks, etc.
-- **Resume gap review** — click the 📎 button to upload your resume, then ask what you're missing
-- **General questions** — tool comparisons, career advice, anything AI/ML-related
-
-*For market analysis I'll ask you to confirm search parameters before calling the API.*`);
+- **Market Analysis** — full job market breakdown for any role and country
+- **Focused Questions** — based on market job market analysis can answer questions about required cloud platforms, certifications, frameworks, etc.
+- **Resume Gap Review** — based on your resume, can suggest what you should learn next.
+- **General questions** — tool comparisons, career advice, anything AI/ML-related.`);
 }
 
 function renderTips() {
