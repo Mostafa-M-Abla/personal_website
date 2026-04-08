@@ -64,6 +64,15 @@
       scroll-behavior: smooth;
     }
 
+    /* ── Status bar ──────────────────────────────────────────────────────── */
+    #status-bar {
+      padding: .6rem 1.1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--brand-primary);
+      border-top: 1px solid rgba(78,115,223,.13);
+    }
+
     /* Human bubble */
     .msg-human { display: flex; justify-content: flex-end; margin-bottom: .7rem; }
     .msg-human .bubble {
@@ -524,6 +533,9 @@
 
           <!-- Messages -->
           <div id="messages"></div>
+
+          <!-- Status bar -->
+          <div id="status-bar">Step 0</div>
 
           <!-- Input section (inside card, below messages) -->
           <div id="input-section">
@@ -1040,6 +1052,7 @@ function hideInterrupt() {
 ═══════════════════════════════════════════════════════════════════════════ */
 function resetPipeline() {
   lastActiveNode = null;
+  document.getElementById('status-bar').textContent = 'Step 0';
   PIPELINE_NODES.forEach(n => {
     const gn = document.getElementById(`gnode-${n.id}`);
     if (gn) gn.classList.remove('gnode-active', 'gnode-done');
@@ -1049,6 +1062,10 @@ function resetPipeline() {
 function setNodeActive(id) {
   if (lastActiveNode && lastActiveNode !== id) setNodeDone(lastActiveNode);
   lastActiveNode = id;
+
+  // Update status bar with current step name
+  const node = PIPELINE_NODES.find(n => n.id === id);
+  document.getElementById('status-bar').textContent = node ? node.label : id;
 
   // SVG graph highlight (visible when user scrolls to the "How it works" diagram)
   const gn = document.getElementById(`gnode-${id}`);
