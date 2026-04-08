@@ -78,7 +78,7 @@
     }
     #status-toggle {
       background: none; border: none; cursor: pointer;
-      font-size: .85rem; color: var(--brand-primary); opacity: .55;
+      font-size: 1.2rem; color: var(--brand-primary); opacity: .75;
       padding: 0; line-height: 1;
       transition: opacity .15s, transform .2s;
     }
@@ -670,7 +670,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
 
 <script>
-console.log('JOB-MARKET-CHAT v10 LOADED 2026-04-08');
+console.log('JOB-MARKET-CHAT v10Great it worked, see scree LOADED 2026-04-08');
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CONFIGURATION
@@ -879,12 +879,12 @@ async function readSSE(response) {
         console.log('[SSE]', JSON.stringify(evType), evData.slice(0, 80));
         const parsed = JSON.parse(evData);
         if (evType === 'node_start' && parsed.node) {
-          const prev = document.getElementById('status-text').textContent;
+          const prev = document.getElementById('status-text').textContent.replace(/\.\.\.$/,'');
           if (prev) { stepHistory.push(prev); renderStepHistory(); }
           stepCount++;
           const node = PIPELINE_NODES.find(n => n.id === parsed.node);
           document.getElementById('status-text').textContent =
-            'Step ' + stepCount + ': ' + (node ? node.label : parsed.node);
+            'Step ' + stepCount + ': ' + (node ? node.label : parsed.node) + '...';
           document.getElementById('status-toggle').style.display =
             stepHistory.length ? '' : 'none';
         } else if (evType === 'done' || evType === 'error') {
