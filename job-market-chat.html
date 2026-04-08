@@ -535,7 +535,7 @@
           <div id="messages"></div>
 
           <!-- Status bar -->
-          <div id="status-bar">Step 0</div>
+          <div id="status-bar"></div>
 
           <!-- Input section (inside card, below messages) -->
           <div id="input-section">
@@ -840,12 +840,10 @@ async function readSSE(response) {
       if (evType && evData) {
         if (evType === 'node_start') {
           stepCount++;
-          try {
-            const nodeId = JSON.parse(evData).node;
-            const node   = PIPELINE_NODES.find(n => n.id === nodeId);
-            const label  = node ? node.label : nodeId;
-            document.getElementById('status-bar').textContent = 'Step ' + stepCount + ': ' + label;
-          } catch (_) {}
+          const nodeId = JSON.parse(evData).node;
+          const node   = PIPELINE_NODES.find(n => n.id === nodeId);
+          const label  = node ? node.label : nodeId;
+          document.getElementById('status-bar').textContent = 'Step ' + stepCount + ': ' + label;
         }
         try { handleEvent(evType, JSON.parse(evData)); } catch (err) { console.error('[SSE] handleEvent error:', err); }
       }
@@ -1062,7 +1060,7 @@ function hideInterrupt() {
 ═══════════════════════════════════════════════════════════════════════════ */
 function resetPipeline() {
   lastActiveNode = null;
-  document.getElementById('status-bar').textContent = 'Step 0';
+  document.getElementById('status-bar').textContent = '';
   PIPELINE_NODES.forEach(n => {
     const gn = document.getElementById(`gnode-${n.id}`);
     if (gn) gn.classList.remove('gnode-active', 'gnode-done');
