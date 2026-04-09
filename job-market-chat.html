@@ -628,7 +628,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
 
 <script>
-console.log('JOB-MARKET-CHAT v13 Great it worked, see scree LOADED 2026-04-08');
+console.log('JOB-MARKET-CHAT v14 Great it worked, see scree LOADED 2026-04-08');
 
 /* ═══════════════════════════════════════════════════════════════════════════
    CONFIGURATION
@@ -765,7 +765,7 @@ async function handleSend() {
     const res = await fetch(`${API_BASE}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: text, session_id: sessionId, total_posts: 3 }),
+      body: JSON.stringify({ message: text, session_id: sessionId, total_posts: 5 }),
     });
     if (!res.ok) throw new Error((await res.json()).detail || `HTTP ${res.status}`);
     await readSSE(res);
